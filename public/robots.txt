@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Generative engine crawlers (AEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+Sitemap: https://www.studiocheckmate.com/sitemap.xml

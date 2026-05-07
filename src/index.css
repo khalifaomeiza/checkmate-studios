@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Yellowtail", cursive;
+
+  --color-brand-orange: #FF6321;
+  --color-brand-black: #050505;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-brand-black bg-white antialiased overflow-x-hidden;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-orange;
+  }
+}

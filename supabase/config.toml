@@ -1,0 +1,13 @@
+# Supabase project config (versioned with the repo).
+# Edit `project_id` after running `supabase link` against your project.
+
+project_id = "vqsdynkbxvxdsshvrklo"
+
+[functions.newsletter-subscribe]
+verify_jwt = false   # public form — anon callers allowed
+
+[functions.contact-submit]
+verify_jwt = false
+
+[functions.career-apply]
+verify_jwt = false
