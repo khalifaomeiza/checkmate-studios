@@ -1,0 +1,14 @@
+# Server-side only — Edge Functions deploy via the Supabase CLI, not Vercel.
+supabase/
+
+# Local development noise
+.env
+.env.*
+!.env.example
+.DS_Store
+.kiro/
+*.log
+
+# Build artefacts (Vercel rebuilds from source)
+dist/
+node_modules/
