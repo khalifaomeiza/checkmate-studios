@@ -86,7 +86,8 @@ const Hero = () => {
   // iOS Safari (and some Android browsers) block <video autoPlay> unless
   // `muted` is set on the DOM property AND .play() is invoked programmatically.
   // The declarative React `muted` prop sometimes doesn't propagate, so we
-  // force it via the ref, then fall back to first-touch playback if blocked.
+  // force it via the ref, fall back to first-touch playback if blocked,
+  // and re-resume on any subsequent pause (battery saver, tab restore, etc.).
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -100,7 +101,13 @@ const Hero = () => {
 
     void tryPlay();
 
-    // If autoplay was rejected, retry on the first user interaction.
+    // Any unexpected pause → resume immediately, keeps it on infinite play.
+    const onPause = () => {
+      if (!video.ended) void tryPlay();
+    };
+    video.addEventListener('pause', onPause);
+
+    // First-interaction fallback if the initial autoplay was rejected.
     const resume = () => {
       void tryPlay();
       window.removeEventListener('touchstart', resume);
@@ -112,6 +119,7 @@ const Hero = () => {
     window.addEventListener('scroll', resume, { once: true, passive: true });
 
     return () => {
+      video.removeEventListener('pause', onPause);
       window.removeEventListener('touchstart', resume);
       window.removeEventListener('click', resume);
       window.removeEventListener('scroll', resume);
@@ -136,7 +144,12 @@ const Hero = () => {
             preload="auto"
             poster={HERO_VIDEO_POSTER}
             disableRemotePlayback
-            className="w-full h-full object-cover"
+            disablePictureInPicture
+            controls={false}
+            controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
+            tabIndex={-1}
+            aria-hidden="true"
+            className="w-full h-full object-cover pointer-events-none"
           >
             <source src={HERO_VIDEO_SRC} type="video/mp4" />
           </video>

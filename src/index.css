@@ -28,4 +28,22 @@
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-brand-orange;
   }
+
+  /* Suppress every native iOS / WebKit / Blink video chrome overlay so the
+     hero video stays a silent, looping background even when autoplay is
+     paused for a frame. The actual play() is driven imperatively in JS. */
+  video::-webkit-media-controls,
+  video::-webkit-media-controls-enclosure,
+  video::-webkit-media-controls-panel,
+  video::-webkit-media-controls-overlay-play-button,
+  video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  video {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
