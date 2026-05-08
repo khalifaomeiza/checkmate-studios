@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { Instagram, Facebook, Twitter, Linkedin, Dribbble, ArrowRight, ShoppingCart, X, ChevronLeft, Search, MapPin, Clock } from 'lucide-react';
-import { useState, useEffect, type ComponentType, type SVGProps } from 'react';
+import { useState, useEffect, useRef, type ComponentType, type SVGProps } from 'react';
 import { cn } from './lib/utils';
 import { usePageSeo } from './lib/seo';
 import { FOOTER_SOCIALS } from './lib/socials';
@@ -75,40 +75,88 @@ const Navbar = ({ onNavigate, currentPage }: { onNavigate: (page: string) => voi
   </nav>
 );
 
-const Hero = () => (
-  <section className="pb-12 w-full text-center">
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1.2 }}
-      className="relative w-full h-[80vh] md:h-screen overflow-hidden flex items-center justify-center mb-20"
-    >
-      <div className="absolute inset-0 w-full h-full pointer-events-none">
-        <video 
-          autoPlay 
-          muted 
-          loop 
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src="https://res.cloudinary.com/dliesrplu/video/upload/v1777382524/Checkmate_Hero_d0axoc.mp4" type="video/mp4" />
-        </video>
-      </div>
-      <div className="absolute inset-0 bg-black/5" />
-    </motion.div>
+const HERO_VIDEO_SRC =
+  'https://res.cloudinary.com/dliesrplu/video/upload/v1777382524/Checkmate_Hero_d0axoc.mp4';
+const HERO_VIDEO_POSTER =
+  'https://res.cloudinary.com/dliesrplu/video/upload/so_0/v1777382524/Checkmate_Hero_d0axoc.jpg';
 
-    <div className="px-8">
-      <motion.h1 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
-        className="text-5xl md:text-8xl font-normal tracking-tight"
+const Hero = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // iOS Safari (and some Android browsers) block <video autoPlay> unless
+  // `muted` is set on the DOM property AND .play() is invoked programmatically.
+  // The declarative React `muted` prop sometimes doesn't propagate, so we
+  // force it via the ref, then fall back to first-touch playback if blocked.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+
+    const tryPlay = () => video.play().catch(() => undefined);
+
+    void tryPlay();
+
+    // If autoplay was rejected, retry on the first user interaction.
+    const resume = () => {
+      void tryPlay();
+      window.removeEventListener('touchstart', resume);
+      window.removeEventListener('click', resume);
+      window.removeEventListener('scroll', resume);
+    };
+    window.addEventListener('touchstart', resume, { once: true, passive: true });
+    window.addEventListener('click', resume, { once: true });
+    window.addEventListener('scroll', resume, { once: true, passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', resume);
+      window.removeEventListener('click', resume);
+      window.removeEventListener('scroll', resume);
+    };
+  }, []);
+
+  return (
+    <section className="pb-12 w-full text-center">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
+        className="relative w-full h-[80vh] md:h-screen overflow-hidden flex items-center justify-center mb-20"
       >
-        You are here by design.
-      </motion.h1>
-    </div>
-  </section>
-);
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={HERO_VIDEO_POSTER}
+            disableRemotePlayback
+            className="w-full h-full object-cover"
+          >
+            <source src={HERO_VIDEO_SRC} type="video/mp4" />
+          </video>
+        </div>
+        <div className="absolute inset-0 bg-black/5" />
+      </motion.div>
+
+      <div className="px-8">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.5 }}
+          className="text-5xl md:text-8xl font-normal tracking-tight"
+        >
+          You are here by design.
+        </motion.h1>
+      </div>
+    </section>
+  );
+};
 
 const Offerings = () => {
   const categories = ['Branding', 'Website', 'Application', 'Illustration', 'Adverts and Media'];
