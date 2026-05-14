@@ -8,6 +8,16 @@ import { BehanceIcon } from './components/icons/BehanceIcon';
 import { NewsletterForm } from './forms/NewsletterForm';
 import { ContactForm as ContactFormFields } from './forms/ContactForm';
 import { CareerApplicationForm } from './forms/CareerApplicationForm';
+import {
+  WORK_CATEGORIES,
+  allWorksForGrid,
+  type Work,
+  type WorkCategory
+} from './data/works';
+import {
+  showcaseForCategory,
+  type ShowcaseItem
+} from './data/showcase';
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
 
@@ -171,15 +181,171 @@ const Hero = () => {
   );
 };
 
-const Offerings = () => {
-  const categories = ['Branding', 'Website', 'Application', 'Illustration', 'Adverts and Media'];
-  const [activeCategory, setActiveCategory] = useState('Branding');
+// ----- Optimised <picture> primitive ---------------------------------------
+// Emits an AVIF → WebP → PNG fallback chain. Each source comes from
+// vite-imagetools and already carries a width-keyed srcset, so the browser
+// only downloads the variant it actually needs.
+interface OptimisedPictureProps {
+  src: string;
+  sources: Record<string, string>;
+  width: number;
+  height: number;
+  alt: string;
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  className?: string;
+}
 
-  // Generate 6 works for each category
-  const works = Array.from({ length: 6 }).map((_, i) => ({
-    id: i,
-    title: `${activeCategory} Project ${i + 1}`
-  }));
+const OptimisedPicture = ({
+  src,
+  sources,
+  width,
+  height,
+  alt,
+  sizes = '(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw',
+  loading = 'lazy',
+  className
+}: OptimisedPictureProps) => (
+  <picture>
+    {Object.entries(sources).map(([mime, srcset]) => (
+      <source key={mime} type={mime} srcSet={srcset} sizes={sizes} />
+    ))}
+    <img
+      src={src}
+      width={width}
+      height={height}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      draggable={false}
+      className={className}
+    />
+  </picture>
+);
+
+// ----- Shared 16:9 project card --------------------------------------------
+// Used by RecentWorks. Pulls its image data from the imagetools picture object
+// stored on the work itself.
+interface WorkCardProps {
+  work: Work;
+  index: number;
+  /** Hint to eagerly load above-the-fold cards. */
+  priority?: boolean;
+}
+
+const WorkCard = ({ work, index, priority = false }: WorkCardProps) => (
+  <motion.a
+    href={work.href}
+    target="_blank"
+    rel="noopener noreferrer"
+    initial={{ opacity: 0, y: 24 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: '-80px' }}
+    transition={{ duration: 0.6, delay: Math.min(index, 4) * 0.07, ease: [0.22, 1, 0.36, 1] }}
+    className="group block focus:outline-none"
+    aria-label={`${work.title} — ${work.subtitle} (opens in a new tab)`}
+  >
+    <div className="relative w-full aspect-video overflow-hidden rounded-2xl bg-[#ececec]">
+      <div className="absolute inset-0 transition-transform duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]">
+        <OptimisedPicture
+          src={work.thumbnail.src}
+          sources={work.thumbnail.sources}
+          width={work.thumbnail.width}
+          height={work.thumbnail.height}
+          alt={`${work.title} — ${work.subtitle}`}
+          loading={priority ? 'eager' : 'lazy'}
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Bottom gradient veil — reveals on hover for legibility */}
+      <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/55 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      {/* Bottom-left reveal: title + arrow */}
+      <div className="absolute inset-x-0 bottom-0 z-10 p-5 md:p-6 flex items-end justify-between gap-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+        <div className="text-white">
+          <p className="text-xs uppercase tracking-[0.2em] text-white/60 mb-1">{work.client}</p>
+          <h3 className="text-2xl md:text-3xl font-medium leading-tight">{work.title}</h3>
+        </div>
+        <div className="w-11 h-11 rounded-full bg-brand-orange flex items-center justify-center shadow-lg shadow-brand-orange/30 flex-shrink-0">
+          <ArrowRight size={18} className="text-white" />
+        </div>
+      </div>
+    </div>
+
+    {/* Caption visible at rest — keeps the grid scannable when not hovered */}
+    <div className="mt-5 flex items-baseline justify-between gap-4 px-1">
+      <div>
+        <h3 className="text-lg md:text-xl font-bold tracking-tight group-hover:text-brand-orange transition-colors">
+          {work.title}
+        </h3>
+        <p className="text-sm text-gray-500 mt-0.5">{work.subtitle}</p>
+      </div>
+      <span className="text-xs uppercase tracking-[0.2em] text-gray-400 whitespace-nowrap">
+        {work.year}
+      </span>
+    </div>
+  </motion.a>
+);
+
+// ----- Showcase card -------------------------------------------------------
+// Renders a 16:9 visual sample for the Offerings filter — either an optimised
+// <picture> (branding / illustration / adverts) or a silent looping <video>
+// (websites). Captionless on purpose — the work is the story.
+interface ShowcaseCardProps {
+  item: ShowcaseItem;
+  index: number;
+}
+
+const ShowcaseCard = ({ item, index }: ShowcaseCardProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 16 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: '-60px' }}
+    transition={{ duration: 0.55, delay: Math.min(index, 5) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+    className="group relative aspect-video overflow-hidden rounded-2xl bg-[#ececec] cursor-default"
+  >
+    <div className="absolute inset-0 transition-transform duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]">
+      {item.kind === 'image' ? (
+        <OptimisedPicture
+          src={item.src}
+          sources={item.sources}
+          width={item.width}
+          height={item.height}
+          alt={item.alt}
+          loading="lazy"
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <video
+          src={item.src}
+          poster={item.poster}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          disablePictureInPicture
+          aria-label={item.alt}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        />
+      )}
+    </div>
+
+    {/* Quiet hover overlay — orange wash for tactile feedback */}
+    <div className="absolute inset-0 bg-brand-orange/0 group-hover:bg-brand-orange/10 transition-colors duration-500" />
+  </motion.div>
+);
+
+// ----- Offerings — filtered showcase grid ----------------------------------
+// Pulls visual samples from src/data/showcase.ts (driven by import.meta.glob
+// over src/assets/showcase/<category>/, with Websites coming from
+// /public/showcase/Websites/*.mp4).
+const Offerings = () => {
+  const [activeCategory, setActiveCategory] = useState<WorkCategory>('Branding');
+  const items = showcaseForCategory(activeCategory);
 
   return (
     <section className="pt-4 pb-12 px-8 w-full">
@@ -188,16 +354,18 @@ const Offerings = () => {
         <div className="h-px flex-1 bg-brand-black/10" />
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-16">
-        {categories.map((cat) => (
+      <div className="flex flex-wrap gap-3 md:gap-4 mb-12 md:mb-16">
+        {WORK_CATEGORIES.map((cat) => (
           <button
             key={cat}
+            type="button"
             onClick={() => setActiveCategory(cat)}
+            aria-pressed={activeCategory === cat}
             className={cn(
-              "px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 border",
+              'px-6 md:px-8 py-2.5 md:py-3 rounded-full text-sm font-medium transition-all duration-300 border',
               activeCategory === cat
-                ? "bg-brand-black text-white border-brand-black"
-                : "bg-transparent text-brand-black border-brand-black/10 hover:border-brand-black/30"
+                ? 'bg-brand-black text-white border-brand-black'
+                : 'bg-transparent text-brand-black border-brand-black/10 hover:border-brand-black/30'
             )}
           >
             {cat}
@@ -208,34 +376,45 @@ const Offerings = () => {
       <AnimatePresence mode="wait">
         <motion.div
           key={activeCategory}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.35 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
         >
-          {works.map((work) => (
-            <motion.div
-              key={work.id}
-            >
-              <div className="aspect-square bg-gray-100 overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 transition-transform duration-500" />
-              </div>
-            </motion.div>
-          ))}
+          {items.length > 0 ? (
+            items.map((item, i) => (
+              <ShowcaseCard key={`${activeCategory}-${i}`} item={item} index={i} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-16 border border-dashed border-black/10 rounded-3xl">
+              <p className="text-gray-400 text-lg">
+                Fresh {activeCategory.toLowerCase()} work is in the pipeline — check back soon.
+              </p>
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
     </section>
   );
 };
 
+// ----- Recent Works — home page hero gallery -------------------------------
+// Starts with 4 cards visible (2 rows × 2 cols on desktop). Each "load more"
+// click reveals 4 additional projects until everything in WORKS has been
+// shown — then the button morphs into a portfolio link to Behance.
+const INITIAL_RECENT_WORKS = 4;
+const RECENT_WORKS_INCREMENT = 4;
+
 const RecentWorks = () => {
-  const projects = [
-    { title: "Gigly", subtitle: "Freelance Service platform" },
-    { title: "Gigly", subtitle: "Freelance Service platform" },
-    { title: "Gigly", subtitle: "Freelance Service platform" },
-    { title: "Gigly", subtitle: "Freelance Service platform" },
-  ];
+  const ordered = allWorksForGrid();
+  const [visibleCount, setVisibleCount] = useState(INITIAL_RECENT_WORKS);
+  const projects = ordered.slice(0, visibleCount);
+  const hasMore = visibleCount < ordered.length;
+
+  const loadMore = () => {
+    setVisibleCount((n) => Math.min(n + RECENT_WORKS_INCREMENT, ordered.length));
+  };
 
   return (
     <section className="py-12 px-8 w-full">
@@ -243,34 +422,40 @@ const RecentWorks = () => {
         <h2 className="text-sm font-medium uppercase tracking-wider">Recent Works</h2>
         <div className="h-px flex-1 bg-brand-black/10" />
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
-        {projects.map((project, i) => (
-          <motion.div 
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="group cursor-pointer"
-          >
-            <div className="aspect-[4/3] bg-[#E5E5E5] rounded-lg mb-6 overflow-hidden relative">
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
-                className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"
-              />
-            </div>
-            <h3 className="text-xl font-bold mb-1">{project.title}</h3>
-            <p className="text-gray-500">{project.subtitle}</p>
-          </motion.div>
-        ))}
+        <AnimatePresence initial={false}>
+          {projects.map((project, i) => (
+            <WorkCard
+              key={project.slug}
+              work={project}
+              index={i}
+              priority={i < 2}
+            />
+          ))}
+        </AnimatePresence>
       </div>
-      
+
       <div className="mt-16 flex justify-center w-full px-8">
-        <button className="w-full md:w-auto border border-brand-black px-8 md:px-20 py-4 rounded-xl text-base md:text-lg font-medium hover:bg-brand-orange hover:border-brand-orange hover:text-white transition-all duration-300">
-          More works that makes you scream checkmate
-        </button>
+        {hasMore ? (
+          <button
+            type="button"
+            onClick={loadMore}
+            className="w-full md:w-auto text-center border border-brand-black px-8 md:px-20 py-4 rounded-xl text-base md:text-lg font-medium hover:bg-brand-orange hover:border-brand-orange hover:text-white transition-all duration-300"
+          >
+            More works that makes you scream checkmate
+          </button>
+        ) : (
+          <a
+            href="https://www.behance.net/checkmatestudios/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full md:w-auto text-center border border-brand-black px-8 md:px-20 py-4 rounded-xl text-base md:text-lg font-medium hover:bg-brand-orange hover:border-brand-orange hover:text-white transition-all duration-300 inline-flex items-center justify-center gap-3 group"
+          >
+            View the full portfolio on Behance
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </a>
+        )}
       </div>
     </section>
   );

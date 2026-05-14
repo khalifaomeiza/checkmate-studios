@@ -8,6 +8,7 @@ supabase/
 .DS_Store
 .kiro/
 *.log
+_archive/
 
 # Build artefacts (Vercel rebuilds from source)
 dist/

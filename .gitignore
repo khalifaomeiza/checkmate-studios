@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Source archives kept locally for reference but not deployed
+_archive/
