@@ -12,3 +12,6 @@ _archive/
 
 # Large resource zips (hosted on R2/Supabase; not in repo)
 public/resources/Files/
+
+# Local WIP exports (Behance zips, etc. — never push)
+public/workInProgress/
