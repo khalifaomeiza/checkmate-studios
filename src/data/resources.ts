@@ -1,3 +1,5 @@
+import { RESOURCE_ZIP_CLOUDINARY_URLS } from './resourceZipUrls.generated';
+
 export interface ResourceProduct {
   id: string;
   title: string;
@@ -15,6 +17,14 @@ export interface ResourceProduct {
 
 export const resourceUrl = (pathUnderResources: string): string =>
   encodeURI(`/resources/${pathUnderResources.replace(/^\//, '')}`);
+
+/** Prefer Cloudinary raw URL when present (see resourceZipUrls.generated.ts). */
+export const resourceDownloadUrl = (pathUnderResources: string): string => {
+  const normalized = pathUnderResources.replace(/^\//, '');
+  const direct = RESOURCE_ZIP_CLOUDINARY_URLS[normalized];
+  if (direct) return direct;
+  return resourceUrl(normalized);
+};
 
 const FILES = [
   'Files/Branding Guidelines.zip',

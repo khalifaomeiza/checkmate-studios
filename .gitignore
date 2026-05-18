@@ -9,3 +9,6 @@ coverage/
 
 # Source archives kept locally for reference but not deployed
 _archive/
+
+# Large resource zips (hosted on R2/Supabase; not in repo)
+public/resources/Files/

@@ -28,6 +28,7 @@ import {
   RESOURCE_PRODUCTS,
   resourcesFeaturedOnHome,
   resourceUrl,
+  resourceDownloadUrl,
   RESOURCE_SHOWCASE_PATHS,
   type ResourceProduct
 } from './data/resources';
@@ -696,7 +697,7 @@ const ProductDetailPage = ({
   ].filter((path, idx, arr) => arr.indexOf(path) === idx);
   const images = galleryPaths.map(resourceUrl);
   const [activeImage, setActiveImage] = useState(0);
-  const downloadHref = resourceUrl(product.downloadPath);
+  const downloadHref = resourceDownloadUrl(product.downloadPath);
 
   return (
     <motion.div
