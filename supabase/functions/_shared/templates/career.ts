@@ -3,7 +3,10 @@ import {
   accentBlock,
   labelledRow,
   ctaButton,
-  escapeHtml
+  escapeHtml,
+  emailH1,
+  emailH2,
+  emailP
 } from './shell.ts';
 
 interface CareerData {
@@ -17,32 +20,27 @@ interface CareerData {
   coverLetter?: string;
 }
 
+const linkStyle = 'color:#26251e;text-decoration:underline;';
+
 export const careerApplicantEmail = (data: CareerData) => {
   const body = `
-    <h1 style="font-weight:500;font-size:24px;margin:0 0 20px;line-height:32px;color:#191919;">Hi ${escapeHtml(
-      data.fullName
-    )} 👋</h1>
-    <p style="line-height:25px;font-size:16px;margin:0 0 16px;color:#191919;">
-      Thank you for applying for the <strong>${escapeHtml(
+    ${emailH1(`Hi ${escapeHtml(data.fullName)}`)}
+    ${emailP(
+      `Thank you for applying for the <strong>${escapeHtml(
         data.jobTitle
-      )}</strong> role at Checkmate Studios. We've received your application and our team will review it within 5–7 business days.
-    </p>
+      )}</strong> role at Checkmate Studios. We've received your application and our team will review it within 5–7 business days.`
+    )}
 
     ${accentBlock(`
-      <h3 style="font-size:18px;font-weight:500;color:#FF6321;margin:0 0 12px;">What happens next</h3>
-      <ul style="margin:0;padding-left:20px;color:#191919;">
-        <li style="margin-bottom:8px;">We review every application personally</li>
-        <li style="margin-bottom:8px;">If your background fits, we'll invite you for an intro chat</li>
-        <li style="margin-bottom:8px;">We aim to respond to every applicant — successful or not</li>
+      ${emailH2('What happens next')}
+      <ul style="margin:0 0 0 20px;padding:0;color:#26251e;font-size:15px;line-height:1.6;font-family:Georgia,serif;">
+        <li style="margin:0 0 6px;">We review every application personally.</li>
+        <li style="margin:0 0 6px;">If your background fits, we'll invite you for an intro chat.</li>
+        <li style="margin:0 0 6px;">We aim to respond to every applicant.</li>
       </ul>
     `)}
 
-    ${ctaButton('Explore Our Work', 'https://www.behance.net/checkmatestudios/')}
-
-    <div style="margin:24px 0;line-height:21px;font-size:14px;color:#191919;">
-      <div>Best regards,</div>
-      <div>The Checkmate Studios Team</div>
-    </div>
+    ${ctaButton('Explore our work', 'https://www.behance.net/checkmatestudios/')}
   `;
 
   return {
@@ -50,6 +48,11 @@ export const careerApplicantEmail = (data: CareerData) => {
     html: renderEmailShell({
       title: 'Application received',
       preheader: `Thanks for applying to Checkmate Studios for the ${data.jobTitle} role.`,
+      docHeader: {
+        eyebrow: 'Careers',
+        title: 'Application received',
+        forName: data.fullName
+      },
       bodyHtml: body
     })
   };
@@ -57,41 +60,39 @@ export const careerApplicantEmail = (data: CareerData) => {
 
 export const careerAdminEmail = (data: CareerData) => {
   const portfolio = data.portfolioUrl
-    ? `<a href="${escapeHtml(data.portfolioUrl)}" style="color:#FF6321;">${escapeHtml(
+    ? `<a href="${escapeHtml(data.portfolioUrl)}" style="${linkStyle}">${escapeHtml(
         data.portfolioUrl
       )}</a>`
     : '<em>Not provided</em>';
 
   const resume = data.resumeUrl
-    ? `<a href="${escapeHtml(data.resumeUrl)}" style="color:#FF6321;">${escapeHtml(
+    ? `<a href="${escapeHtml(data.resumeUrl)}" style="${linkStyle}">${escapeHtml(
         data.resumeName ?? 'Download resume'
       )}</a>`
     : '<em>Attached to this email</em>';
 
   const body = `
-    <h1 style="font-weight:500;font-size:24px;margin:0 0 20px;line-height:32px;color:#191919;">New career application 🎯</h1>
-    <p style="line-height:25px;font-size:16px;margin:0 0 16px;color:#191919;">
-      A new applicant just submitted an application via the careers page.
-    </p>
+    ${emailH1('New career application')}
+    ${emailP('A new applicant submitted an application via the careers page.')}
 
     ${accentBlock(`
-      <h3 style="font-size:18px;font-weight:500;color:#FF6321;margin:0 0 16px;">Applicant Details</h3>
+      ${emailH2('Applicant details')}
       ${labelledRow('Position', `${escapeHtml(data.jobTitle)} (#${escapeHtml(String(data.jobId))})`)}
-      ${labelledRow('Full Name', escapeHtml(data.fullName))}
+      ${labelledRow('Full name', escapeHtml(data.fullName))}
       ${labelledRow(
         'Email',
-        `<a href="mailto:${escapeHtml(data.email)}" style="color:#FF6321;">${escapeHtml(data.email)}</a>`
+        `<a href="mailto:${escapeHtml(data.email)}" style="${linkStyle}">${escapeHtml(data.email)}</a>`
       )}
       ${labelledRow('Portfolio', portfolio)}
       ${labelledRow('Resume', resume)}
       ${labelledRow(
-        'Cover Letter',
+        'Cover letter',
         data.coverLetter
           ? `<div style="white-space:pre-line;">${escapeHtml(data.coverLetter)}</div>`
           : '<em>Not provided</em>'
       )}
-      <div style="margin-top:20px;font-size:12px;color:#666;font-style:italic;text-align:right;">
-        Submitted on: ${new Date().toLocaleString()}
+      <div style="margin-top:16px;font-family:Menlo,monospace;font-size:11px;color:#26251e99;">
+        Submitted: ${escapeHtml(new Date().toLocaleString())}
       </div>
     `)}
   `;
@@ -101,6 +102,11 @@ export const careerAdminEmail = (data: CareerData) => {
     html: renderEmailShell({
       title: 'New career application',
       preheader: `${data.fullName} just applied for ${data.jobTitle}.`,
+      docHeader: {
+        eyebrow: 'Internal',
+        title: 'Careers application',
+        forName: data.fullName
+      },
       bodyHtml: body
     })
   };

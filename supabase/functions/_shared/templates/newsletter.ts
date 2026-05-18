@@ -1,4 +1,11 @@
-import { renderEmailShell, ctaButton, escapeHtml } from './shell.ts';
+import {
+  renderEmailShell,
+  ctaButton,
+  escapeHtml,
+  emailH1,
+  emailH2,
+  emailP
+} from './shell.ts';
 
 interface NewsletterWelcomeData {
   firstName?: string;
@@ -7,42 +14,43 @@ interface NewsletterWelcomeData {
 
 export const newsletterWelcomeEmail = (data: NewsletterWelcomeData) => {
   const greeting = data.firstName
-    ? `Hi ${escapeHtml(data.firstName)}! 👋`
-    : 'Hi there! 👋';
+    ? `Hi ${escapeHtml(data.firstName)}`
+    : 'Hi there';
+
+  const recipientLabel = data.firstName ?? 'Subscriber';
 
   const body = `
-    <h1 style="font-weight:500;font-size:24px;margin:0 0 20px;line-height:32px;color:#191919;">${greeting}</h1>
-    <p style="line-height:25px;font-size:16px;margin:0 0 16px;color:#191919;">
-      Thank you for subscribing! We're thrilled to have you join the Checkmate Studios community.
-    </p>
-    <p style="line-height:25px;font-size:16px;margin:0 0 16px;color:#191919;">
-      You'll be the first to know about our latest projects, creative insights, industry news, and exclusive resources.
-    </p>
+    ${emailH1(greeting)}
+    ${emailP(
+      'Thank you for subscribing. We are glad to have you in the Checkmate Studios community.'
+    )}
+    ${emailP(
+      "You'll be among the first to hear about new work, creative notes, and resources."
+    )}
 
-    <div style="background-color:#f6f6f6;padding:24px;border-radius:8px;margin:24px 0;border-left:4px solid #FF6321;">
-      <h3 style="font-size:18px;font-weight:500;line-height:24px;color:#FF6321;margin:0 0 12px;">What to Expect</h3>
-      <ul style="margin:0;padding:0;list-style:none;">
-        <li style="margin-bottom:12px;line-height:24px;font-size:16px;color:#191919;">✓ Latest project showcases and case studies</li>
-        <li style="margin-bottom:12px;line-height:24px;font-size:16px;color:#191919;">✓ Creative insights and design tips</li>
-        <li style="margin-bottom:12px;line-height:24px;font-size:16px;color:#191919;">✓ Industry news and trends</li>
-        <li style="margin-bottom:12px;line-height:24px;font-size:16px;color:#191919;">✓ Exclusive behind-the-scenes content</li>
-        <li style="margin-bottom:12px;line-height:24px;font-size:16px;color:#191919;">✓ Early access to new resources and templates</li>
+    <div style="background:#f3efe8;padding:20px 20px;border-radius:8px;margin:20px 0;border:1px solid #26251e26;">
+      ${emailH2('What to expect')}
+      <ul style="margin:0 0 0 20px;padding:0;color:#26251e;font-size:15px;line-height:1.6;font-family:Georgia,serif;">
+        <li style="margin:0 0 6px;">Project showcases and case studies</li>
+        <li style="margin:0 0 6px;">Design and brand thinking</li>
+        <li style="margin:0 0 6px;">Occasional studio news</li>
+        <li style="margin:0 0 6px;">Early access to new resources when we release them</li>
       </ul>
     </div>
 
-    ${ctaButton('View Our Portfolio', 'https://www.behance.net/checkmatestudios/')}
-
-    <div style="margin:24px 0;line-height:21px;font-size:14px;color:#191919;">
-      <div>Best regards,</div>
-      <div>The Checkmate Studios Team</div>
-    </div>
+    ${ctaButton('View our portfolio', 'https://www.behance.net/checkmatestudios/')}
   `;
 
   return {
-    subject: 'Welcome to Checkmate Studios Newsletter! 🎨',
+    subject: 'Welcome to the Checkmate Studios newsletter',
     html: renderEmailShell({
       title: 'Welcome to Checkmate Studios',
-      preheader: 'You are now part of the Checkmate Studios community.',
+      preheader: 'You are now on the list for Checkmate Studios updates.',
+      docHeader: {
+        eyebrow: 'Newsletter',
+        title: 'You are subscribed',
+        forName: recipientLabel
+      },
       bodyHtml: body
     })
   };

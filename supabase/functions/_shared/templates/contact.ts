@@ -3,7 +3,10 @@ import {
   ctaButton,
   accentBlock,
   labelledRow,
-  escapeHtml
+  escapeHtml,
+  emailH1,
+  emailH2,
+  emailP
 } from './shell.ts';
 
 interface ContactData {
@@ -14,43 +17,43 @@ interface ContactData {
   projectDetails?: string;
 }
 
+const linkStyle = 'color:#26251e;text-decoration:underline;';
+
 export const contactUserEmail = (data: ContactData) => {
   const summary = data.projectDetails
-    ? `<div style="background-color:#ffffff;padding:16px;border-radius:6px;border:1px solid #e7e7e7;white-space:pre-line;line-height:24px;font-style:italic;color:#666;">${escapeHtml(
+    ? `<div style="padding:14px;border:1px solid #26251e26;border-radius:6px;white-space:pre-line;line-height:1.65;font-family:Georgia,serif;font-size:15px;color:#26251e;">${escapeHtml(
         data.projectDetails
       )}</div>`
-    : '<p style="color:#888;font-style:italic;margin:0;">We will reach out to gather your project details.</p>';
+    : '<p style="color:#26251e99;font-style:italic;margin:0;font-size:15px;font-family:Georgia,serif;">We will reach out to gather your project details.</p>';
 
   const body = `
-    <h1 style="font-weight:500;font-size:24px;margin:0 0 20px;line-height:32px;color:#191919;">Thank you, ${escapeHtml(
-      data.name
-    )}! 🎉</h1>
-    <p style="line-height:25px;font-size:16px;margin:0 0 16px;color:#191919;">
-      We've received your message and are excited to learn more about your project. Our team will review your inquiry and respond within 24 hours.
-    </p>
+    ${emailH1(`Thank you, ${escapeHtml(data.name)}`)}
+    ${emailP(
+      "We've received your message and are excited to learn more about your project. Our team will review your inquiry and respond within 24 hours."
+    )}
 
     ${accentBlock(`
-      <h3 style="font-size:18px;font-weight:500;line-height:24px;color:#FF6321;margin:0 0 12px;">Your Message Summary</h3>
+      ${emailH2('Your message summary')}
       ${summary}
     `)}
 
-    <p style="line-height:25px;font-size:16px;margin:0 0 16px;color:#191919;">
-      While you wait, feel free to explore our portfolio. We're passionate about bringing innovative ideas to life.
-    </p>
+    ${emailP(
+      'While you wait, feel free to explore our portfolio. We are passionate about bringing ambitious ideas to life.'
+    )}
 
-    ${ctaButton('View Our Portfolio', 'https://www.behance.net/checkmatestudios/')}
-
-    <div style="margin:24px 0;line-height:21px;font-size:14px;color:#191919;">
-      <div>Best regards,</div>
-      <div>The Checkmate Studios Team</div>
-    </div>
+    ${ctaButton('View our portfolio', 'https://www.behance.net/checkmatestudios/')}
   `;
 
   return {
-    subject: "Thank you for contacting Checkmate Studios — we'll be in touch soon ✨",
+    subject: "Thank you for contacting Checkmate Studios — we'll be in touch soon",
     html: renderEmailShell({
       title: 'Thank you for contacting Checkmate Studios',
       preheader: "We've received your message and will reply within 24 hours.",
+      docHeader: {
+        eyebrow: 'Contact',
+        title: 'Message received',
+        forName: data.name
+      },
       bodyHtml: body
     })
   };
@@ -58,43 +61,44 @@ export const contactUserEmail = (data: ContactData) => {
 
 export const contactAdminEmail = (data: ContactData) => {
   const body = `
-    <h1 style="font-weight:500;font-size:24px;margin:0 0 20px;line-height:32px;color:#191919;">New Contact Form Submission 👋</h1>
-    <p style="line-height:25px;font-size:16px;margin:0 0 16px;color:#191919;">
-      A new project inquiry just came through the Checkmate Studios website.
-    </p>
+    ${emailH1('New contact form submission')}
+    ${emailP('A new project inquiry came through the Checkmate Studios website.')}
 
     ${accentBlock(`
-      <h3 style="font-size:18px;font-weight:500;line-height:24px;color:#FF6321;margin:0 0 16px;">Contact Details</h3>
-      ${labelledRow('Full Name', escapeHtml(data.name))}
+      ${emailH2('Contact details')}
+      ${labelledRow('Full name', escapeHtml(data.name))}
       ${labelledRow(
         'Email',
-        `<a href="mailto:${escapeHtml(data.email)}" style="color:#FF6321;text-decoration:none;">${escapeHtml(
+        `<a href="mailto:${escapeHtml(data.email)}" style="${linkStyle}">${escapeHtml(
           data.email
         )}</a>`
       )}
       ${data.service ? labelledRow('Service', escapeHtml(data.service)) : ''}
       ${data.budget ? labelledRow('Budget', escapeHtml(data.budget)) : ''}
       ${labelledRow(
-        'Project Details',
+        'Project details',
         data.projectDetails
           ? `<div style="white-space:pre-line;">${escapeHtml(data.projectDetails)}</div>`
           : '<em>Not provided</em>'
       )}
-      <div style="margin-top:20px;font-size:12px;color:#666;font-style:italic;text-align:right;">
-        Submitted on: ${new Date().toLocaleString()}
+      <div style="margin-top:16px;font-family:Menlo,monospace;font-size:11px;color:#26251e99;">
+        Submitted: ${escapeHtml(new Date().toLocaleString())}
       </div>
     `)}
 
-    <p style="line-height:25px;font-size:16px;margin:16px 0;color:#191919;">
-      Please reply to this lead within 24 hours to maintain our service standards.
-    </p>
+    ${emailP('Please reply to this lead within 24 hours to maintain our service standards.')}
   `;
 
   return {
-    subject: `New Contact Form Submission from ${data.name}`,
+    subject: `New contact form submission from ${data.name}`,
     html: renderEmailShell({
       title: 'New contact form submission',
       preheader: `${data.name} just sent a message via the website.`,
+      docHeader: {
+        eyebrow: 'Internal',
+        title: 'Website inquiry',
+        forName: data.name
+      },
       bodyHtml: body
     })
   };

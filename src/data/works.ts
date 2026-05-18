@@ -1,17 +1,3 @@
-/**
- * Canonical project catalogue for Checkmate Studios.
- *
- * Thumbnails live in src/assets/works/<slug>.png and are imported through
- * vite-imagetools (`?as=picture`), so every project ships AVIF + WebP +
- * PNG variants at 4 responsive widths automatically.
- *
- * The home page (RecentWorks) renders `featured: true` projects.
- */
-
-// The `?as=picture` query routes the import through vite-imagetools so
-// TypeScript resolves these to { img, sources } (see vite-env.d.ts).
-// vite.config.ts's `defaultDirectives` adds the AVIF/WebP/PNG + responsive
-// widths on top.
 import delliooThumb from '../assets/works/dellioo.png?as=picture';
 import giglyThumb from '../assets/works/gigly.png?as=picture';
 import finAiThumb from '../assets/works/fin-ai.png?as=picture';
@@ -19,6 +5,8 @@ import picavacaThumb from '../assets/works/picavaca.png?as=picture';
 import speedforgeThumb from '../assets/works/speedforge.png?as=picture';
 import pixelPurseThumb from '../assets/works/pixel-purse.png?as=picture';
 import julieJudeThumb from '../assets/works/julie-and-jude.png?as=picture';
+import invixtaThumb from '../assets/works/invixta.png?as=picture';
+import listtifyThumb from '../assets/works/listtify.png?as=picture';
 
 export type WorkCategory =
   | 'Branding'
@@ -152,6 +140,28 @@ export const WORKS: readonly Work[] = [
     year: '2024',
     client: 'Julie & Jude',
     thumbnail: asThumb(julieJudeThumb),
+    href: 'https://www.behance.net/checkmatestudios/'
+  },
+  {
+    slug: 'invixta',
+    title: 'Invixta',
+    subtitle: 'Brand identity & visual system',
+    category: 'Branding',
+    tags: ['Website'],
+    year: '2025',
+    client: 'Invixta',
+    thumbnail: asThumb(invixtaThumb),
+    href: 'https://www.behance.net/checkmatestudios/'
+  },
+  {
+    slug: 'listtify',
+    title: 'Listtify',
+    subtitle: 'Product brand — lists & tasks',
+    category: 'Application',
+    tags: ['Branding'],
+    year: '2025',
+    client: 'Listtify',
+    thumbnail: asThumb(listtifyThumb),
     href: 'https://www.behance.net/checkmatestudios/'
   }
 ];

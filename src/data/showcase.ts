@@ -1,28 +1,15 @@
-/**
- * Showcase items rendered in the Offerings section.
- *
- * Each image goes through vite-imagetools (`?as=picture`) to ship
- * AVIF / WebP / PNG variants at multiple widths. Videos live in /public
- * and are served as-is.
- *
- * Drop a new file into src/assets/showcase/<category-slug>/ and wire it
- * up below — explicit imports rather than a glob keeps types stable and
- * sidesteps build-time edge cases.
- */
+
 
 import type { WorkCategory } from './works';
 
-// ----- Branding -----------------------------------------------------------
 import branding1 from '../assets/showcase/branding/branding-1.png?as=picture';
 import branding2 from '../assets/showcase/branding/branding-2.png?as=picture';
 import branding3 from '../assets/showcase/branding/branding-3.png?as=picture';
 import branding4 from '../assets/showcase/branding/branding-4.png?as=picture';
 
-// ----- Illustration -------------------------------------------------------
 import illustration1 from '../assets/showcase/illustration/illustration-1.png?as=picture';
 import illustration2 from '../assets/showcase/illustration/illustration-2.png?as=picture';
 
-// ----- Adverts and Media --------------------------------------------------
 import am1 from '../assets/showcase/adverts-and-media/am-1.png?as=picture';
 import am2 from '../assets/showcase/adverts-and-media/am-2.png?as=picture';
 import am3 from '../assets/showcase/adverts-and-media/am-3.png?as=picture';
@@ -90,6 +77,16 @@ export const SHOWCASE: Record<WorkCategory, readonly ShowcaseItem[]> = {
       kind: 'video',
       src: '/showcase/Websites/web2.mp4',
       alt: 'Website showcase — product landing demo'
+    },
+    {
+      kind: 'video',
+      src: '/showcase/Websites/web3.mp4',
+      alt: 'Website showcase — editorial layout demo'
+    },
+    {
+      kind: 'video',
+      src: '/showcase/Websites/web4.mp4',
+      alt: 'Website showcase — brand site motion demo'
     }
   ],
   Application: [] // pipeline — drop PNGs into src/assets/showcase/application/
