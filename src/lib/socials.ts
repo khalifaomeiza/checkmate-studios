@@ -41,13 +41,6 @@ export const SOCIAL_LINKS = {
     url: 'https://www.linkedin.com/company/stds-checkmate/',
     handle: 'stds-checkmate',
     ariaLabel: 'Checkmate Studios on LinkedIn'
-  },
-  // TODO: replace url with the real Dribbble profile once confirmed.
-  dribbble: {
-    name: 'Dribbble',
-    url: 'https://dribbble.com',
-    handle: 'tbd',
-    ariaLabel: 'Checkmate Studios on Dribbble'
   }
 } as const satisfies Record<string, SocialLink>;
 
@@ -55,7 +48,6 @@ export const FOOTER_SOCIALS: readonly SocialLink[] = [
   SOCIAL_LINKS.instagram,
   SOCIAL_LINKS.facebook,
   SOCIAL_LINKS.behance,
-  SOCIAL_LINKS.dribbble,
   SOCIAL_LINKS.twitter,
   SOCIAL_LINKS.linkedin
 ];
