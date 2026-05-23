@@ -82,7 +82,7 @@ export const NewsletterForm = ({
           <Form noValidate className="w-full">
             <div className="flex flex-col md:flex-row gap-8 items-end">
               <div className="flex-1 border-b border-white/20 pb-4 w-full">
-                <p className="text-[10px] text-white/40 mb-2 uppercase tracking-[0.2em] font-bold">
+                <p className="text-[10px] text-white/40 mb-2 uppercase tracking-[0.2em] font-medium">
                   Your First Name
                 </p>
                 <Field
@@ -99,7 +99,7 @@ export const NewsletterForm = ({
               </div>
               <div className="flex-[1.5] flex items-end gap-4 border-b border-white/20 pb-4 w-full">
                 <div className="flex-1">
-                  <p className="text-[10px] text-white/40 mb-2 uppercase tracking-[0.2em] font-bold">
+                  <p className="text-[10px] text-white/40 mb-2 uppercase tracking-[0.2em] font-medium">
                     Email Address
                   </p>
                   <Field

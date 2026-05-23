@@ -54,7 +54,7 @@ export const WorkCard = ({ work, index, priority = false }: WorkCardProps) => (
     {/* Caption visible at rest — keeps the grid scannable when not hovered */}
     <div className="mt-5 flex items-baseline justify-between gap-4 px-1">
       <div>
-        <h3 className="text-lg md:text-xl font-bold tracking-tight group-hover:text-brand-orange transition-colors">
+        <h3 className="text-lg md:text-xl font-medium tracking-tight group-hover:text-brand-orange transition-colors">
           {work.title}
         </h3>
         <p className="text-sm text-gray-500 mt-0.5">{work.subtitle}</p>

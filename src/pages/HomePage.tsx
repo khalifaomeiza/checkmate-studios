@@ -1,5 +1,5 @@
 import { Hero } from '../components/home/Hero';
-import { Offerings } from '../components/home/Offerings';
+import { Showcase } from '../components/home/Showcase';
 import { RecentWorks } from '../components/home/RecentWorks';
 import { Partners } from '../components/home/Partners';
 import { Testimonial } from '../components/home/Testimonial';
@@ -9,7 +9,7 @@ import { ContactSection } from '../components/home/ContactSection';
 export const HomePage = () => (
   <>
     <Hero />
-    <Offerings />
+    <Showcase />
     <RecentWorks />
     <Partners />
     <Testimonial />

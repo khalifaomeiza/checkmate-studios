@@ -4,7 +4,7 @@ export const Partners = () => (
   <section className="px-8 py-12 w-full">
     <div className="bg-brand-black text-white rounded-3xl md:rounded-[40px] p-12 md:p-20">
       <div className="flex items-center gap-4 mb-12">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
+        <h2 className="text-2xl font-medium flex items-center gap-2">
           Partners <span className="w-2 h-2 bg-white rounded-full inline-block" />
         </h2>
         <div className="h-px flex-1 bg-white/20" />

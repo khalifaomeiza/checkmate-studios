@@ -108,8 +108,11 @@ export const renderEmailShell = ({
           <a href="https://studiocheckmate.com/" style="color:#26251e99;text-decoration:none;">studiocheckmate.com</a> ·
           <a href="mailto:hello@studiocheckmate.com" style="color:#26251e99;text-decoration:none;">hello@studiocheckmate.com</a> ·
           <a href="tel:+2348076845495" style="color:#26251e99;text-decoration:none;">+2348076845495</a><br/>
-          Instagram <a href="https://instagram.com/studio_checkmate" style="color:#26251e99;text-decoration:none;">@studio_checkmate</a> ·
-          <a href="https://www.behance.net/checkmatestudios" style="color:#26251e99;text-decoration:none;">Behance /checkmatestudios</a>
+          Instagram <a href="https://instagram.com/studios.checkmate" style="color:#26251e99;text-decoration:none;">@studios.checkmate</a> ·
+          Twitter <a href="https://twitter.com/stds_checkmate" style="color:#26251e99;text-decoration:none;">@stds_checkmate</a> ·
+          <a href="https://dribbble.com/Checkmate_studios" style="color:#26251e99;text-decoration:none;">Dribbble</a> ·
+          <a href="https://www.facebook.com/studios.checkmate" style="color:#26251e99;text-decoration:none;">Facebook</a> ·
+          <a href="https://www.behance.net/checkmatestudios" style="color:#26251e99;text-decoration:none;">Behance</a>
         </td></tr>
       </table>
     </td></tr>

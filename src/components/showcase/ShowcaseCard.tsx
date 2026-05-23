@@ -13,9 +13,9 @@ export const ShowcaseCard = ({ item, index }: ShowcaseCardProps) => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: '-60px' }}
     transition={{ duration: 0.55, delay: Math.min(index, 5) * 0.05, ease: [0.22, 1, 0.36, 1] }}
-    className="group relative aspect-video overflow-hidden rounded-2xl bg-[#ececec] cursor-default"
+    className="relative aspect-video overflow-hidden rounded-2xl bg-[#ececec] cursor-default"
   >
-    <div className="absolute inset-0 transition-transform duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045]">
+    <div className="absolute inset-0">
       {item.kind === 'image' ? (
         <OptimisedPicture
           src={item.src}
@@ -42,8 +42,5 @@ export const ShowcaseCard = ({ item, index }: ShowcaseCardProps) => (
         />
       )}
     </div>
-
-    {/* Quiet hover overlay — orange wash for tactile feedback */}
-    <div className="absolute inset-0 bg-brand-orange/0 group-hover:bg-brand-orange/10 transition-colors duration-500" />
   </motion.div>
 );

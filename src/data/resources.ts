@@ -1,4 +1,10 @@
 import { RESOURCE_ZIP_CLOUDINARY_URLS } from './resourceZipUrls.generated';
+import { googleDriveThumbnail } from '../lib/drive-media';
+
+/** “Be first” strip — raster from client Drive (sharing must allow link access). */
+export const RESOURCE_NEWSLETTER_SECTION_IMAGE_URL = googleDriveThumbnail(
+  '1p8EQwgCv9thxaEVxCggbwYRoN_9j-bBo'
+);
 
 export interface ResourceProduct {
   id: string;
@@ -34,7 +40,7 @@ export const resourceUrl = (pathUnderResources: string): string =>
 
 /** Native cover frame for catalog + Master Bundle on grid and download (see `Resources *.png`). */
 export const RESOURCE_CATALOG_COVER_ASPECT = '1825/1906' as const;
-/** Prefer hosted URL when present (see resourceZipUrls.generated.ts). */
+
 export const resourceDownloadUrl = (pathUnderResources: string): string => {
   const normalized = pathUnderResources.replace(/^\//, '');
   const direct = RESOURCE_ZIP_CLOUDINARY_URLS[normalized];
@@ -71,7 +77,6 @@ const COVER_BY_ID: Record<string, string> = {
   'master-bundle': 'Master Resources.png'
 };
 
-/** Marketing copy for each resource (download page + grid). */
 const PRODUCT_COPY: Record<string, ProductCopy> = {
   textures: {
     title: 'Texture Pack',
@@ -163,7 +168,6 @@ export const RESOURCE_PRODUCTS: readonly ResourceProduct[] = [
   MASTER_BUNDLE
 ];
 
-/** Showcase strip + marquee (same art as `Resources Showcase/`). */
 export const RESOURCE_SHOWCASE_PATHS: readonly string[] = RESOURCE_FILE_PATHS.map(
   (_, i) => `Resources Showcase/a${i + 1}.png`
 );
@@ -174,7 +178,6 @@ export const resourcesFeaturedOnHome = (): readonly ResourceProduct[] =>
 export const resourceById = (id: string): ResourceProduct | undefined =>
   RESOURCE_PRODUCTS.find((p) => p.id === id);
 
-/** Staggered browser downloads for each archive (user may need to allow multiple downloads). */
 export const triggerResourceDownloads = (
   paths: readonly string[],
   delayMs = 450

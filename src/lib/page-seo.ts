@@ -18,7 +18,7 @@ export const PAGE_SEO: Record<string, { title: string; description: string; cano
     canonical: 'https://www.studiocheckmate.com/playground'
   },
   '/works': {
-    title: 'Work — Selected Projects & Case Studies',
+    title: 'Works — Selected Projects & Case Studies',
     description:
       'Explore branding, digital products, and campaigns from Checkmate Studios — a scroll-through portfolio of recent client work.',
     canonical: 'https://www.studiocheckmate.com/works'

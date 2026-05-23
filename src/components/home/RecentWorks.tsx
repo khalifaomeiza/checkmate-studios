@@ -23,12 +23,7 @@ export const RecentWorks = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
         <AnimatePresence initial={false}>
           {projects.map((project, i) => (
-            <WorkCard
-              key={project.slug}
-              work={project}
-              index={i}
-              priority={i < 2}
-            />
+            <WorkCard key={project.slug} work={project} index={i} priority={i < 2} />
           ))}
         </AnimatePresence>
       </div>
@@ -38,12 +33,12 @@ export const RecentWorks = () => {
           <button
             type="button"
             onClick={onOpenWorksPage}
-            /* Fluid label scale prevents the long sentence from looking cramped
-               on small phones or stretched on tablets where `text-base → text-lg`
-               jumped abruptly at md. */
             className="w-full md:w-auto max-w-[36rem] md:max-w-none text-center border border-brand-black px-6 sm:px-10 md:px-20 py-4 rounded-xl font-medium leading-snug text-[clamp(0.95rem,2.4vw,1.125rem)] hover:bg-brand-orange hover:border-brand-orange hover:text-white transition-all duration-300"
           >
-            More works that makes you scream checkmate
+            <span className="md:hidden">More Works</span>
+            <span className="hidden md:inline">
+              More works that makes you scream checkmate
+            </span>
           </button>
         ) : (
           <a

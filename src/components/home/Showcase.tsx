@@ -5,14 +5,14 @@ import { WORK_CATEGORIES, type WorkCategory } from '../../data/works';
 import { showcaseForCategory } from '../../data/showcase';
 import { ShowcaseCard } from '../showcase/ShowcaseCard';
 
-export const Offerings = () => {
+export const Showcase = () => {
   const [activeCategory, setActiveCategory] = useState<WorkCategory>('Branding');
   const items = showcaseForCategory(activeCategory);
 
   return (
     <section className="pt-4 pb-12 px-8 w-full">
       <div className="flex items-center gap-4 mb-12">
-        <h2 className="text-sm font-medium uppercase tracking-wider">Our Offerings</h2>
+        <h2 className="text-sm font-medium uppercase tracking-wider">Showcase</h2>
         <div className="h-px flex-1 bg-brand-black/10" />
       </div>
 

@@ -20,21 +20,27 @@ export const SOCIAL_LINKS = {
   },
   instagram: {
     name: 'Instagram',
-    url: 'https://www.instagram.com/studio_checkmate/',
-    handle: '@studio_checkmate',
+    url: 'https://instagram.com/studios.checkmate',
+    handle: '@studios.checkmate',
     ariaLabel: 'Checkmate Studios on Instagram'
   },
   behance: {
     name: 'Behance',
-    url: 'https://www.behance.net/checkmatestudios/',
+    url: 'https://www.behance.net/checkmatestudios',
     handle: '@checkmatestudios',
     ariaLabel: 'Checkmate Studios on Behance'
   },
   twitter: {
     name: 'Twitter',
-    url: 'https://twitter.com/stds_checkmate',
+    url: 'http://twitter.com/stds_checkmate',
     handle: '@stds_checkmate',
     ariaLabel: 'Checkmate Studios on Twitter / X'
+  },
+  dribbble: {
+    name: 'Dribbble',
+    url: 'https://dribbble.com/Checkmate_studios',
+    handle: '@Checkmate_studios',
+    ariaLabel: 'Checkmate Studios on Dribbble'
   },
   linkedin: {
     name: 'LinkedIn',
@@ -44,12 +50,13 @@ export const SOCIAL_LINKS = {
   }
 } as const satisfies Record<string, SocialLink>;
 
+/** Footer order follows client-approved list (no LinkedIn in this strip). */
 export const FOOTER_SOCIALS: readonly SocialLink[] = [
   SOCIAL_LINKS.instagram,
-  SOCIAL_LINKS.facebook,
-  SOCIAL_LINKS.behance,
   SOCIAL_LINKS.twitter,
-  SOCIAL_LINKS.linkedin
+  SOCIAL_LINKS.dribbble,
+  SOCIAL_LINKS.behance,
+  SOCIAL_LINKS.facebook
 ];
 
 export const CONTACT_EMAIL = 'hello@studiocheckmate.com';

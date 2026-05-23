@@ -159,7 +159,7 @@ export const ContactForm = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="text-4xl font-bold hover:text-brand-orange transition-colors group flex items-center gap-4 pb-2 disabled:opacity-50"
+              className="text-4xl font-medium hover:text-brand-orange transition-colors group flex items-center gap-4 pb-2 disabled:opacity-50"
             >
               {isSubmitting ? 'Sending…' : 'Submit'}
               <span className="text-2xl transition-transform group-hover:translate-x-2">→</span>

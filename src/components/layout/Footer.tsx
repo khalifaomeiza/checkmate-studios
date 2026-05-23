@@ -28,7 +28,7 @@ export const Footer = () => (
             })}
           </div>
         </div>
-        <h2 className="text-[clamp(1.875rem,5.5vw,3.75rem)] font-bold mb-6">Get our newsletter</h2>
+        <h2 className="text-[clamp(1.875rem,5.5vw,3.75rem)] font-medium mb-6">Get our newsletter</h2>
         <NewsletterForm variant="footer" source="footer" />
       </div>
 

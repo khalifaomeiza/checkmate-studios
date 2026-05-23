@@ -6,7 +6,7 @@ import speedforgeThumb from '../assets/works/speedforge.png?as=picture';
 import pixelPurseThumb from '../assets/works/pixel-purse.png?as=picture';
 import julieJudeThumb from '../assets/works/julie-and-jude.png?as=picture';
 import invixtaThumb from '../assets/works/invixta.png?as=picture';
-import listtifyThumb from '../assets/works/listtify.png?as=picture';
+import { googleDriveThumbnail } from '../lib/drive-media';
 
 export type WorkCategory =
   | 'Branding'
@@ -26,7 +26,7 @@ export interface Work {
   slug: string;
   title: string;
   subtitle: string;
-  /** Primary category — used for the Offerings filter. */
+  /** Primary category — used for the Showcase category filter on the home page. */
   category: WorkCategory;
   /** Secondary categories — surfaced in detail copy, not the filter. */
   tags?: WorkCategory[];
@@ -34,7 +34,7 @@ export interface Work {
   year: string;
   /** Short label shown under the project title. */
   client: string;
-  /** Optimised 16:9 thumbnail emitted by vite-imagetools. */
+  /** Optimised 16:9 thumbnail emitted by vite-imagetools or a raster URL fallback. */
   thumbnail: WorkThumbnail;
   /** External case-study URL — points at Behance for now. */
   href: string;
@@ -53,6 +53,16 @@ const asThumb = (p: ImagetoolsPicture): WorkThumbnail => ({
   width: p.img.w,
   height: p.img.h
 });
+
+/** Single raster thumbnail (e.g. Google Drive preview) — one source for OptimisedPicture. */
+const rasterThumbUrl = (url: string, width: number, height: number): WorkThumbnail => ({
+  src: url,
+  sources: { 'image/jpeg': `${url} ${width}w` },
+  width,
+  height
+});
+
+const LISTTIFY_THUMB_URL = googleDriveThumbnail('1SwSpLp9DO9hNBDyAPthhtB6fgMoOCKWe');
 
 export const WORK_CATEGORIES: readonly WorkCategory[] = [
   'Branding',
@@ -161,7 +171,7 @@ export const WORKS: readonly Work[] = [
     tags: ['Branding'],
     year: '2025',
     client: 'Listtify',
-    thumbnail: asThumb(listtifyThumb),
+    thumbnail: rasterThumbUrl(LISTTIFY_THUMB_URL, 1600, 900),
     href: 'https://www.behance.net/checkmatestudios/'
   }
 ];

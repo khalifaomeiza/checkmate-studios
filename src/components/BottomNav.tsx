@@ -4,7 +4,7 @@ import { cn } from '../lib/utils';
 
 const ITEMS: { to: string; label: string }[] = [
   { to: '/', label: 'Home' },
-  { to: '/works', label: 'Work' },
+  { to: '/works', label: 'Works' },
   { to: '/resources', label: 'Shop' },
   { to: '/playground', label: 'Play' },
   { to: '/careers', label: 'Careers' }

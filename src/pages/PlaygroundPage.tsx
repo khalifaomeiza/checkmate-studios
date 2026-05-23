@@ -22,7 +22,7 @@ const PlaygroundDetail = ({ post, onBack }: { post: any, onBack: () => void }) =
 
         <div className="mb-12">
           <div className="flex items-center gap-4 mb-6">
-            <span className="bg-brand-orange/10 text-brand-orange px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+            <span className="bg-brand-orange/10 text-brand-orange px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider">
               {post.category}
             </span>
             <span className="text-sm text-gray-400">{post.date}</span>
@@ -35,7 +35,7 @@ const PlaygroundDetail = ({ post, onBack }: { post: any, onBack: () => void }) =
               <img src={`https://picsum.photos/seed/${post.author}/100/100`} alt={post.author} className="w-full h-full object-cover" />
             </div>
             <div>
-              <p className="font-bold">{post.author}</p>
+              <p className="font-medium">{post.author}</p>
               <p className="text-sm text-gray-400">{post.role}</p>
             </div>
           </div>
@@ -61,7 +61,7 @@ const PlaygroundDetail = ({ post, onBack }: { post: any, onBack: () => void }) =
             <p>
               From the way we interact with our smartphones to the layout of our cities, design is everywhere. It influences our decisions, our emotions, and our productivity. At Checkmate Studio, we believe that good design is a fundamental right, not a luxury.
             </p>
-            <h2 className="text-3xl font-bold mt-12 mb-6">The Human Element</h2>
+            <h2 className="text-3xl font-medium mt-12 mb-6">The Human Element</h2>
             <p>
               When we approach a new project, we start by asking ourselves: how will this improve the user's life? We focus on empathy, understanding the needs and frustrations of the people we're designing for. This human-centric approach is what sets great design apart from mediocre design.
             </p>
@@ -254,7 +254,7 @@ export const PlaygroundPage = () => {
               <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start md:items-center">
                 <div className="flex-1 order-2 md:order-1">
                   <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
-                    <span className="bg-brand-orange/10 text-brand-orange px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <span className="bg-brand-orange/10 text-brand-orange px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider">
                       {post.category}
                     </span>
                     <span>{post.date}</span>

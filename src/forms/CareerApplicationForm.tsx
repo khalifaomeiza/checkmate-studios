@@ -79,7 +79,7 @@ export const CareerApplicationForm = ({ job, onSuccess }: Props) => {
         <Form noValidate className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
-              <label htmlFor="fullName" className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">
+              <label htmlFor="fullName" className="text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400">
                 Full Name
               </label>
               <Field
@@ -92,7 +92,7 @@ export const CareerApplicationForm = ({ job, onSuccess }: Props) => {
               <ErrorMessage name="fullName" component="p" className="text-xs text-red-500" />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">
+              <label htmlFor="email" className="text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400">
                 Email Address
               </label>
               <Field
@@ -107,7 +107,7 @@ export const CareerApplicationForm = ({ job, onSuccess }: Props) => {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="portfolioUrl" className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">
+            <label htmlFor="portfolioUrl" className="text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400">
               Portfolio Link (Optional)
             </label>
             <Field
@@ -121,7 +121,7 @@ export const CareerApplicationForm = ({ job, onSuccess }: Props) => {
           </div>
 
           <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Resume / CV</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400">Resume / CV</span>
             <label className="relative group block cursor-pointer">
               <input
                 type="file"
@@ -149,7 +149,7 @@ export const CareerApplicationForm = ({ job, onSuccess }: Props) => {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="coverLetter" className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">
+            <label htmlFor="coverLetter" className="text-[10px] uppercase tracking-[0.2em] font-medium text-gray-400">
               Cover Letter / Message
             </label>
             <Field
@@ -166,7 +166,7 @@ export const CareerApplicationForm = ({ job, onSuccess }: Props) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-brand-black text-white py-6 rounded-2xl font-bold text-lg hover:bg-brand-orange transition-colors flex items-center justify-center gap-3 group disabled:opacity-60"
+            className="w-full bg-brand-black text-white py-6 rounded-2xl font-medium text-lg hover:bg-brand-orange transition-colors flex items-center justify-center gap-3 group disabled:opacity-60"
           >
             {isSubmitting ? 'Submitting…' : 'Submit Application'}
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

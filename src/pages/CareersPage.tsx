@@ -130,10 +130,10 @@ export const CareersPage = () => {
           <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-xs font-bold uppercase tracking-widest text-brand-orange bg-brand-orange/10 px-3 py-1 rounded">
+                <span className="text-xs font-medium uppercase tracking-widest text-brand-orange bg-brand-orange/10 px-3 py-1 rounded">
                   {selectedJob.category}
                 </span>
-                <span className="text-xs text-gray-400 uppercase tracking-widest font-bold">
+                <span className="text-xs text-gray-400 uppercase tracking-widest font-medium">
                   {selectedJob.type}
                 </span>
               </div>
@@ -173,7 +173,7 @@ export const CareersPage = () => {
                 <ul className="space-y-4">
                   {selectedJob.responsibilities.map((item: string, i: number) => (
                     <li key={i} className="flex gap-4 text-gray-600 leading-relaxed">
-                      <span className="text-brand-orange font-bold">•</span>
+                      <span className="text-brand-orange font-medium">•</span>
                       {item}
                     </li>
                   ))}
@@ -185,7 +185,7 @@ export const CareersPage = () => {
                 <ul className="space-y-4">
                   {selectedJob.requirements.map((item: string, i: number) => (
                     <li key={i} className="flex gap-4 text-gray-600 leading-relaxed">
-                      <span className="text-brand-orange font-bold">•</span>
+                      <span className="text-brand-orange font-medium">•</span>
                       {item}
                     </li>
                   ))}
@@ -256,10 +256,10 @@ export const CareersPage = () => {
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-brand-orange bg-brand-orange/10 px-2 py-0.5 rounded">
+                  <span className="text-xs font-medium uppercase tracking-widest text-brand-orange bg-brand-orange/10 px-2 py-0.5 rounded">
                     {job.category}
                   </span>
-                  <span className="text-xs opacity-40 uppercase tracking-widest font-bold">
+                  <span className="text-xs opacity-40 uppercase tracking-widest font-medium">
                     {job.type}
                   </span>
                 </div>
@@ -308,10 +308,10 @@ export const CareersPage = () => {
               <div className="p-8 md:p-12 border-b border-gray-100 flex justify-between items-start">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="text-xs font-bold uppercase tracking-widest text-brand-orange bg-brand-orange/10 px-2 py-0.5 rounded">
+                    <span className="text-xs font-medium uppercase tracking-widest text-brand-orange bg-brand-orange/10 px-2 py-0.5 rounded">
                       {selectedJob.category}
                     </span>
-                    <span className="text-xs text-gray-400 uppercase tracking-widest font-bold">
+                    <span className="text-xs text-gray-400 uppercase tracking-widest font-medium">
                       {selectedJob.type}
                     </span>
                   </div>

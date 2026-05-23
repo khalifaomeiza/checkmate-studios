@@ -56,7 +56,7 @@ export const Testimonial = () => {
               "{testimonials[currentIndex].quote}"
             </p>
             <div className="space-y-1">
-              <p className="font-bold">{testimonials[currentIndex].author}</p>
+              <p className="font-medium">{testimonials[currentIndex].author}</p>
               <a href="#" className="text-gray-500 underline underline-offset-4 hover:text-brand-orange transition-colors">
                 {testimonials[currentIndex].company}
               </a>

@@ -5,6 +5,7 @@ import { cn } from '../lib/utils';
 import {
   RESOURCE_PRODUCTS,
   RESOURCE_SHOWCASE_PATHS,
+  RESOURCE_NEWSLETTER_SECTION_IMAGE_URL,
   resourceUrl
 } from '../data/resources';
 import type { ResourceProduct } from '../data/resources';
@@ -136,7 +137,7 @@ export const ResourcesPage = () => {
                     />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-2xl font-bold group-hover:text-brand-orange transition-colors">
+                    <h3 className="text-2xl font-medium group-hover:text-brand-orange transition-colors">
                       {product.title}
                     </h3>
                     <p className="text-sm text-gray-500">{product.subtitle}</p>
@@ -146,7 +147,7 @@ export const ResourcesPage = () => {
                   <span className="hidden md:block text-sm text-gray-400 max-w-xs truncate">
                     {product.description}
                   </span>
-                  <span className="text-xl font-bold">{product.price}</span>
+                  <span className="text-xl font-medium">{product.price}</span>
                 </div>
               </motion.div>
             ))}
@@ -242,9 +243,10 @@ export const ResourcesPage = () => {
       <section className="bg-brand-black text-white rounded-[40px] p-8 md:p-12 flex flex-col md:flex-row items-center gap-12 md:gap-20">
         <div className="w-full md:w-1/4 aspect-square bg-white/5 rounded-3xl overflow-hidden relative ring-1 ring-white/10">
           <img
-            src={resourceUrl('Master Resources.png')}
+            src={RESOURCE_NEWSLETTER_SECTION_IMAGE_URL}
             alt=""
             className="h-full w-full object-cover opacity-90"
+            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-black to-transparent opacity-60" />
         </div>
