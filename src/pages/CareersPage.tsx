@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
-import { ArrowRight, ChevronLeft, MapPin, Clock, X } from 'lucide-react';
+import { ArrowRight, MapPin, Clock, X } from 'lucide-react';
 import { CareerApplicationForm } from '../forms/CareerApplicationForm';
+import { BackButton } from '../components/ui/BackButton';
 
 export const CareersPage = () => {
   const [selectedJob, setSelectedJob] = useState<any>(null);
@@ -119,13 +120,11 @@ export const CareersPage = () => {
     return (
       <div className="min-h-screen bg-white pt-24">
         <div className="px-8 py-12 max-w-5xl mx-auto">
-          <button 
+          <BackButton
+            label="Back to Careers"
             onClick={() => setSelectedJob(null)}
-            className="flex items-center gap-2 text-gray-400 hover:text-brand-black mb-12 transition-colors group"
-          >
-            <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-sm font-medium uppercase tracking-widest">Back to Careers</span>
-          </button>
+            className="mb-12"
+          />
 
           <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
             <div className="flex-1">

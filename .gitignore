@@ -15,3 +15,5 @@ public/resources/Files/
 
 # Local WIP exports (Behance zips, etc. — never push)
 public/workInProgress/
+# Added by code-review-graph
+.code-review-graph/

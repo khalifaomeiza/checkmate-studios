@@ -1,77 +1,119 @@
 import { motion } from 'motion/react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { WORKS, type Work } from '../data/works';
+import type { Work } from '../data/works';
+import { useWorksCatalog } from '../hooks/useWorksCatalog';
 import { OptimisedPicture } from '../components/media/OptimisedPicture';
 
+gsap.registerPlugin(ScrollTrigger);
+
+const worksStackKey = (works: Work[]) => works.map((work) => work.slug).join('|');
+
+const WorksStackSkeleton = () => (
+  <div className="flex min-h-[100svh] w-full items-center justify-center px-3 sm:px-5 md:px-8 pb-24 md:pb-0">
+    <div className="aspect-[4/5] w-[min(92vw,28rem)] animate-pulse rounded-2xl bg-neutral-200 sm:aspect-[16/11] sm:w-[min(92vw,40rem)] md:aspect-video md:w-[min(92vw,56rem)] md:rounded-3xl lg:w-[min(90vw,72rem)]" />
+  </div>
+);
+
 const WorksGsapStack = ({ works }: { works: Work[] }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
   useGSAP(
     () => {
-      gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
 
+      const pinEl = pinRef.current;
       const cards = cardRefs.current.filter((el): el is HTMLAnchorElement => Boolean(el));
-      const n = cards.length;
-      if (n === 0) return;
+      const count = cards.length;
 
-      gsap.set(cards, { transformOrigin: '50% 50%', yPercent: 100, scale: 1, rotation: 0, force3D: true });
-      gsap.set(cards[0], { yPercent: 0 });
+      if (!pinEl || count === 0) return;
 
-      if (n === 1) return;
+      cards.forEach((card, index) => {
+        gsap.set(card, {
+          zIndex: index + 1,
+          transformOrigin: '50% 50%',
+          force3D: true,
+          yPercent: index === 0 ? 0 : 100,
+          scale: 1,
+          rotation: 0
+        });
+      });
 
-      const tl = gsap.timeline({
+      if (count === 1) return;
+
+      const scrollLength = () => Math.max(window.innerHeight, 480) * (count - 1);
+
+      const timeline = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
-          trigger: '.works-sticky-cards',
+          trigger: pinEl,
           start: 'top top',
-          end: () => `+=${window.innerHeight * (n - 1)}`,
-          pin: true,
-          scrub: 0.5,
+          end: () => `+=${scrollLength()}`,
+          pin: pinEl,
           pinSpacing: true,
-          invalidateOnRefresh: true,
-          anticipatePin: 1
+          scrub: true,
+          invalidateOnRefresh: true
         }
       });
 
-      for (let i = 0; i < n - 1; i++) {
-        tl.to(cards[i], { scale: 0.7, rotation: 5, duration: 1 }, i);
-        tl.to(cards[i + 1], { yPercent: 0, duration: 1 }, i);
+      for (let index = 0; index < count - 1; index += 1) {
+        timeline.to(
+          cards[index],
+          { scale: 0.9, rotation: 3, duration: 1 },
+          index
+        );
+        timeline.to(cards[index + 1], { yPercent: 0, duration: 1 }, index);
       }
 
-      const ro = new ResizeObserver(() => ScrollTrigger.refresh());
-      if (containerRef.current) ro.observe(containerRef.current);
+      let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+      const scheduleRefresh = () => {
+        if (refreshTimer) clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 120);
+      };
+
+      const resizeObserver = new ResizeObserver(scheduleRefresh);
+      resizeObserver.observe(pinEl);
+
+      const onLoad = () => scheduleRefresh();
+      window.addEventListener('load', onLoad);
 
       return () => {
-        ro.disconnect();
-        tl.kill();
+        if (refreshTimer) clearTimeout(refreshTimer);
+        resizeObserver.disconnect();
+        window.removeEventListener('load', onLoad);
+        timeline.scrollTrigger?.kill();
+        timeline.kill();
       };
     },
-    { scope: containerRef, dependencies: [works.length], revertOnUpdate: true }
+    {
+      scope: rootRef,
+      dependencies: [worksStackKey(works)],
+      revertOnUpdate: true
+    }
   );
 
   return (
-    <div ref={containerRef} className="relative w-full overflow-x-clip">
-      <div className="works-sticky-cards relative flex h-[100dvh] w-full items-center justify-center overflow-hidden px-3 sm:px-5 md:px-8">
-        <div
-          data-works-stack-stage
-          className="relative w-[min(92vw,28rem)] aspect-[4/5] overflow-hidden rounded-2xl sm:w-[min(92vw,40rem)] sm:aspect-[16/11] md:w-[min(92vw,56rem)] md:aspect-video md:rounded-3xl lg:w-[min(90vw,72rem)] xl:w-[min(88vw,80rem)] 2xl:w-[min(86vw,88rem)]"
-        >
-          {works.map((work, i) => (
-            <a
+    <div ref={rootRef} className="relative w-full">
+      <div
+        ref={pinRef}
+        className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden px-3 sm:px-5 md:px-8 pb-24 md:pb-0"
+      >
+        <div className="relative w-[min(92vw,28rem)] aspect-[4/5] overflow-hidden rounded-2xl sm:w-[min(92vw,40rem)] sm:aspect-[16/11] md:w-[min(92vw,56rem)] md:aspect-video md:rounded-3xl lg:w-[min(90vw,72rem)] xl:w-[min(88vw,80rem)] 2xl:w-[min(86vw,88rem)]">
+          {works.map((work, index) => (
+            <Link
               key={work.slug}
-              href={work.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              to={`/works/${work.slug}`}
               ref={(el) => {
-                cardRefs.current[i] = el;
+                cardRefs.current[index] = el;
               }}
               className="group absolute inset-0 block overflow-hidden rounded-2xl bg-neutral-200 shadow-[0_36px_120px_-32px_rgba(0,0,0,0.42)] ring-1 ring-black/[0.06] will-change-transform [backface-visibility:hidden] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange [-webkit-tap-highlight-color:transparent] md:rounded-3xl"
-              aria-label={`${work.title} — ${work.subtitle} (opens in a new tab)`}
+              aria-label={`${work.title} — ${work.subtitle}`}
             >
               <OptimisedPicture
                 src={work.thumbnail.src}
@@ -79,7 +121,7 @@ const WorksGsapStack = ({ works }: { works: Work[] }) => {
                 width={work.thumbnail.width}
                 height={work.thumbnail.height}
                 alt={`${work.title} — ${work.subtitle}`}
-                loading={i < 2 ? 'eager' : 'lazy'}
+                loading={index < 2 ? 'eager' : 'lazy'}
                 sizes="(max-width:640px) 92vw, (max-width:1024px) 88vw, min(88rem,88vw)"
                 className="block h-full w-full object-cover object-center"
               />
@@ -98,10 +140,13 @@ const WorksGsapStack = ({ works }: { works: Work[] }) => {
                 </p>
                 <div className="mt-4 flex items-center gap-2 text-xs font-medium text-brand-orange md:mt-5 md:text-sm">
                   View case study
-                  <ArrowRight size={14} className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 md:h-4 md:w-4" />
+                  <ArrowRight
+                    size={14}
+                    className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 md:h-4 md:w-4"
+                  />
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
@@ -110,7 +155,14 @@ const WorksGsapStack = ({ works }: { works: Work[] }) => {
 };
 
 const WorksPageInner = () => {
-  const works = [...WORKS];
+  const { works, loading } = useWorksCatalog();
+  const stackKey = worksStackKey(works);
+
+  useEffect(() => {
+    if (loading) return;
+    const frame = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(frame);
+  }, [loading, stackKey]);
 
   return (
     <div className="min-h-screen bg-white pt-24">
@@ -136,7 +188,11 @@ const WorksPageInner = () => {
       </div>
 
       <section className="relative w-full bg-gradient-to-b from-white via-neutral-50/80 to-white pb-24">
-        <WorksGsapStack works={works} />
+        {loading ? (
+          <WorksStackSkeleton />
+        ) : (
+          <WorksGsapStack key={stackKey} works={works} />
+        )}
       </section>
     </div>
   );

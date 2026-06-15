@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
-import { ChevronLeft } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { BackButton } from '../components/ui/BackButton';
 
 const PlaygroundDetail = ({ post, onBack }: { post: any, onBack: () => void }) => {
   return (
@@ -12,13 +12,7 @@ const PlaygroundDetail = ({ post, onBack }: { post: any, onBack: () => void }) =
       className="min-h-screen bg-white"
     >
       <div className="max-w-4xl mx-auto px-8 py-12">
-        <button 
-          onClick={onBack}
-          className="flex items-center gap-2 text-sm font-medium mb-12 hover:underline decoration-1 underline-offset-4 transition-all"
-        >
-          <ChevronLeft size={20} />
-          Back to Playground
-        </button>
+        <BackButton label="Back to Playground" onClick={onBack} className="mb-12" />
 
         <div className="mb-12">
           <div className="flex items-center gap-4 mb-6">

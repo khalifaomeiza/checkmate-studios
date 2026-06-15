@@ -5,6 +5,9 @@
 		},
 		{
 			"path": ".."
+		},
+		{
+			"path": "../../khalifa-portfolio"
 		}
 	],
 	"settings": {}

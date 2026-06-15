@@ -2,10 +2,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Browser-safe Supabase client.
- * Uses the public ANON key — RLS policies (see supabase/schema.sql)
- * block direct anon writes; mutations should go through /api/* endpoints.
- *
- * Useful for: realtime feeds, public reads, auth flows, signed Storage URLs.
+ * Uses the public ANON key — RLS policies gate writes; editors mutate via JWT + RLS.
  */
 
 const url = import.meta.env.VITE_SUPABASE_URL;
@@ -15,7 +12,13 @@ let client: SupabaseClient | null = null;
 
 if (url && anonKey) {
   client = createClient(url, anonKey, {
-    auth: { persistSession: true, autoRefreshToken: true }
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storageKey: 'checkmate-studios-auth',
+      storage: typeof window !== 'undefined' ? window.localStorage : undefined
+    }
   });
 } else if (typeof window !== 'undefined') {
   console.warn(

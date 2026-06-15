@@ -8,6 +8,8 @@
 
 const ALLOWED_ORIGINS = new Set<string>([
   'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002',
   'http://localhost:5173',
   'https://www.studiocheckmate.com',
   'https://studiocheckmate.com'
@@ -16,12 +18,31 @@ const ALLOWED_ORIGINS = new Set<string>([
 const isAllowed = (origin: string | null): boolean => {
   if (!origin) return true; // server-to-server / curl
   if (ALLOWED_ORIGINS.has(origin)) return true;
-  // Allow any *.studiocheckmate.com previews
-  return /\.studiocheckmate\.com$/.test(new URL(origin).hostname);
+
+  try {
+    const { hostname, protocol, port } = new URL(origin);
+
+    if (protocol === 'http:' && (hostname === 'localhost' || hostname === '127.0.0.1')) {
+      return true;
+    }
+
+    // Vite dev server on LAN (e.g. http://192.168.x.x:3000)
+    if (
+      protocol === 'http:' &&
+      /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname) &&
+      ['3000', '3001', '3002', '5173'].includes(port)
+    ) {
+      return true;
+    }
+
+    return /\.studiocheckmate\.com$/.test(hostname);
+  } catch {
+    return false;
+  }
 };
 
 export const corsHeaders = (origin: string | null): Record<string, string> => {
-  const allowedOrigin = isAllowed(origin) ? origin ?? '*' : 'null';
+  const allowedOrigin = isAllowed(origin) ? (origin ?? '*') : 'null';
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers':

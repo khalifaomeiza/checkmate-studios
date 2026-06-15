@@ -1,17 +1,17 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { allWorksForGrid } from '../../data/works';
+import { useWorksCatalog } from '../../hooks/useWorksCatalog';
 import { WorkCard } from '../works/WorkCard';
 
 const INITIAL_RECENT_WORKS = 4;
 
 export const RecentWorks = () => {
   const navigate = useNavigate();
+  const { featuredWorks } = useWorksCatalog();
   const onOpenWorksPage = () => navigate('/works');
-  const ordered = allWorksForGrid();
-  const projects = ordered.slice(0, INITIAL_RECENT_WORKS);
-  const hasMoreOnWorksPage = ordered.length > INITIAL_RECENT_WORKS;
+  const projects = featuredWorks.slice(0, INITIAL_RECENT_WORKS);
+  const hasMoreOnWorksPage = featuredWorks.length > INITIAL_RECENT_WORKS;
 
   return (
     <section className="py-12 px-8 w-full">

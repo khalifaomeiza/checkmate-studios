@@ -11,3 +11,12 @@ verify_jwt = false
 
 [functions.career-apply]
 verify_jwt = false
+
+[functions.admin-signup]
+verify_jwt = false
+
+[functions.case-study-media-upload]
+verify_jwt = false   # auth handled in requireEditor(); avoids multipart JWT gateway issues
+
+[functions.case-study-delete]
+verify_jwt = false   # auth handled in requireEditor()

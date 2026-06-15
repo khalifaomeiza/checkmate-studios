@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
-import { Download, ChevronLeft } from 'lucide-react';
+import { Download } from 'lucide-react';
 import type { ResourceProduct } from '../../data/resources';
+import { BackButton } from '../../components/ui/BackButton';
 import {
   resourceUrl,
   resourceDownloadUrl,
@@ -31,14 +32,11 @@ export const ProductDetailPage = ({
       className="min-h-screen bg-white font-sans"
     >
       <div className="max-w-6xl mx-auto px-6 sm:px-8 pt-32 pb-20">
-        <button
-          type="button"
+        <BackButton
+          label="Back to Resources"
           onClick={onBack}
-          className="relative z-[90] mb-10 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-4 py-2.5 text-sm font-medium text-brand-black shadow-sm backdrop-blur-sm transition-colors hover:border-brand-orange hover:text-brand-orange"
-        >
-          <ChevronLeft size={18} strokeWidth={2} />
-          Back to Resources
-        </button>
+          className="relative z-[90] mb-10"
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-10 lg:gap-14 xl:gap-16 items-start">
           <motion.div
