@@ -1,13 +1,135 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Pencil, ExternalLink, Trash2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { fetchAllCaseStudiesAdmin } from '../../lib/case-studies';
+import { fetchAllCaseStudiesAdmin, fetchCaseStudyForEditor } from '../../lib/case-studies';
 import { deleteCaseStudy, openOrCreateCaseStudyForWork } from '../../lib/case-study-admin';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
+import { PAGE_SIZE, Pagination, paginate } from '../../components/ui/Pagination';
 import { WORKS } from '../../data/works';
 import type { CaseStudy } from '../../types/case-study';
 import { OptimisedPicture } from '../../components/media/OptimisedPicture';
+import { cn } from '../../lib/utils';
+
+const StatusBadge = ({
+  study,
+  hasStudy = Boolean(study)
+}: {
+  study?: CaseStudy;
+  hasStudy?: boolean;
+}) => {
+  if (!hasStudy || !study) {
+    return (
+      <span className="inline-flex shrink-0 items-center rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-500">
+        Not started
+      </span>
+    );
+  }
+
+  const published = study.status === 'published';
+
+  return (
+    <span
+      className={cn(
+        'inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest',
+        published ? 'bg-brand-orange/10 text-brand-orange' : 'bg-neutral-100 text-gray-600'
+      )}
+    >
+      {study.status}
+    </span>
+  );
+};
+
+const viewLinkClass =
+  'inline-flex items-center gap-2 rounded-full border border-black/10 px-4 py-2 text-sm transition-colors hover:border-brand-orange hover:text-brand-orange';
+
+const ViewLink = ({ href, className }: { href: string; className?: string }) => (
+  <Link to={href} className={cn(viewLinkClass, 'text-gray-600', className)}>
+    <ExternalLink size={14} className="shrink-0" />
+    View
+  </Link>
+);
+
+const actionBtnBase =
+  'inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors md:py-2';
+
+const mobileActionRow = 'mt-4 grid grid-cols-2 gap-2 md:mt-0 md:flex md:flex-wrap md:items-center md:gap-2';
+
+const CardContent = ({
+  meta,
+  title,
+  study,
+  hasStudy,
+  thumbnail
+}: {
+  meta: string;
+  title: string;
+  study?: CaseStudy;
+  hasStudy: boolean;
+  thumbnail?: ReactNode;
+}) => (
+  <>
+    {thumbnail}
+    <div className="min-w-0 flex-1 space-y-2">
+      <p className="truncate text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+        {meta}
+      </p>
+      <h3 className="text-lg font-medium leading-snug md:text-xl">{title}</h3>
+      <StatusBadge study={study} hasStudy={hasStudy} />
+    </div>
+  </>
+);
+
+const AdminProjectCard = ({
+  meta,
+  title,
+  study,
+  hasStudy,
+  viewHref,
+  thumbnail,
+  actions
+}: {
+  meta: string;
+  title: string;
+  study?: CaseStudy;
+  hasStudy: boolean;
+  viewHref?: string;
+  thumbnail?: ReactNode;
+  actions: ReactNode;
+}) => (
+  <article className="relative rounded-2xl border border-black/10 bg-white p-4 md:p-5">
+    {viewHref ? (
+      <ViewLink href={viewHref} className="absolute right-4 top-4 z-10 bg-white shadow-sm md:hidden" />
+    ) : null}
+
+    <div className="hidden md:flex md:flex-wrap md:items-center md:gap-4">
+      <CardContent
+        meta={meta}
+        title={title}
+        study={study}
+        hasStudy={hasStudy}
+        thumbnail={thumbnail}
+      />
+      <div className="flex shrink-0 flex-wrap items-center gap-2">
+        {viewHref ? <ViewLink href={viewHref} /> : null}
+        {actions}
+      </div>
+    </div>
+
+    <div className={cn('md:hidden', viewHref && 'pt-10')}>
+      <div className="flex gap-4">
+        <CardContent
+          meta={meta}
+          title={title}
+          study={study}
+          hasStudy={hasStudy}
+          thumbnail={thumbnail}
+        />
+      </div>
+      <div className={mobileActionRow}>{actions}</div>
+    </div>
+  </article>
+);
 
 export const AdminWorksListPage = () => {
   const { signOut, profile } = useAuth();
@@ -18,11 +140,13 @@ export const AdminWorksListPage = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<CaseStudy | null>(null);
   const [openError, setOpenError] = useState<string | null>(null);
+  const [customOffset, setCustomOffset] = useState(0);
+  const [portfolioOffset, setPortfolioOffset] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    void fetchAllCaseStudiesAdmin()
-      .then((rows) => {
+    void fetchAllCaseStudiesAdmin({ limit: 500, offset: 0 })
+      .then(({ rows }) => {
         if (!cancelled) setStudies(rows);
       })
       .finally(() => {
@@ -48,6 +172,21 @@ export const AdminWorksListPage = () => {
     [studies, workSlugs]
   );
 
+  const customPage = paginate(customStudies, customOffset);
+  const portfolioPage = paginate(WORKS, portfolioOffset);
+
+  useEffect(() => {
+    if (customOffset > 0 && customOffset >= customStudies.length) {
+      setCustomOffset(Math.max(0, customOffset - PAGE_SIZE));
+    }
+  }, [customStudies.length, customOffset]);
+
+  useEffect(() => {
+    if (portfolioOffset > 0 && portfolioOffset >= WORKS.length) {
+      setPortfolioOffset(Math.max(0, portfolioOffset - PAGE_SIZE));
+    }
+  }, [portfolioOffset]);
+
   const openWorkEditor = async (workSlug: string) => {
     setOpeningSlug(workSlug);
     setOpenError(null);
@@ -58,6 +197,24 @@ export const AdminWorksListPage = () => {
       setOpenError(e instanceof Error ? e.message : 'Could not open editor.');
     } finally {
       setOpeningSlug(null);
+    }
+  };
+
+  const requestPortfolioDelete = async (workSlug: string, study?: CaseStudy) => {
+    setOpenError(null);
+    if (study) {
+      setDeleteTarget(study);
+      return;
+    }
+    try {
+      const row = await fetchCaseStudyForEditor(workSlug);
+      if (row) {
+        setDeleteTarget(row);
+        return;
+      }
+      setOpenError('No case study to delete for this work yet.');
+    } catch (e) {
+      setOpenError(e instanceof Error ? e.message : 'Could not load case study.');
     }
   };
 
@@ -77,8 +234,14 @@ export const AdminWorksListPage = () => {
     }
   };
 
+  const editBtnClass = cn(actionBtnBase, 'w-full bg-brand-black text-white hover:bg-brand-orange md:w-auto');
+  const deleteBtnClass = cn(
+    actionBtnBase,
+    'w-full border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-60 md:w-auto'
+  );
+
   return (
-    <div className="min-h-screen bg-[#fafafa] pt-24 pb-24 px-6 md:px-10">
+    <div className="min-h-screen bg-[#fafafa] pt-24 pb-24 px-4 sm:px-6 md:px-10">
       <ConfirmModal
         open={Boolean(deleteTarget)}
         title={`Delete “${deleteTarget?.slug ?? deleteTarget?.title ?? 'project'}”?`}
@@ -92,21 +255,21 @@ export const AdminWorksListPage = () => {
         onConfirm={() => void removeStudy()}
       />
       <div className="max-w-5xl mx-auto">
-        <div className="flex flex-wrap items-start justify-between gap-6 mb-12">
-          <div>
+        <div className="flex flex-col gap-6 mb-12 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <Link to="/" className="text-xl font-medium tracking-tighter block mb-4">
               checkmate
             </Link>
-            <h1 className="text-4xl font-normal tracking-tight">Case studies</h1>
-            <p className="text-gray-500 mt-2">
+            <h1 className="text-3xl font-normal tracking-tight sm:text-4xl">Case studies</h1>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">
               Signed in as {profile?.email ?? 'editor'} — build Behance-style project pages.
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
             <button
               type="button"
               onClick={() => navigate('/admin/works/new')}
-              className="inline-flex items-center gap-2 rounded-full bg-brand-black text-white px-5 py-3 text-sm font-medium hover:bg-brand-orange transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-black text-white px-5 py-3 text-sm font-medium hover:bg-brand-orange transition-colors"
             >
               <Plus size={16} />
               New case study
@@ -132,99 +295,127 @@ export const AdminWorksListPage = () => {
         ) : (
           <div className="space-y-10">
             {customStudies.length > 0 ? (
-              <section className="space-y-4">
+              <section className="space-y-3">
                 <h2 className="text-sm font-medium uppercase tracking-wider text-gray-400">
                   Custom projects
                 </h2>
-                {customStudies.map((study) => (
-                  <StudyRow
+                {customPage.map((study) => (
+                  <AdminProjectCard
                     key={study.id}
-                    title={study.title}
                     meta={study.slug ?? 'No slug yet'}
-                    status={study.status}
+                    title={study.title}
                     study={study}
-                    onEdit={() => navigate(`/admin/works/edit/${study.id}`)}
-                    onDelete={() => setDeleteTarget(study)}
-                    deleting={deletingId === study.id}
+                    hasStudy
+                    viewHref={
+                      study.status === 'published' && study.slug
+                        ? `/works/${study.slug}`
+                        : undefined
+                    }
+                    actions={
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/admin/works/edit/${study.id}`)}
+                          className={editBtnClass}
+                        >
+                          <Pencil size={14} />
+                          <span className="md:hidden">Edit</span>
+                          <span className="hidden md:inline">Edit case study</span>
+                        </button>
+                        <button
+                          type="button"
+                          disabled={deletingId === study.id}
+                          onClick={() => setDeleteTarget(study)}
+                          className={deleteBtnClass}
+                        >
+                          <Trash2 size={14} />
+                          {deletingId === study.id ? '…' : 'Delete'}
+                        </button>
+                      </>
+                    }
                   />
                 ))}
+                <Pagination
+                  offset={customOffset}
+                  total={customStudies.length}
+                  onChange={setCustomOffset}
+                />
               </section>
             ) : null}
 
-            <section className="space-y-4">
+            <section className="space-y-3">
               <h2 className="text-sm font-medium uppercase tracking-wider text-gray-400">
                 Portfolio works
               </h2>
               <div className="space-y-3">
-                {WORKS.map((work) => {
+                {portfolioPage.map((work) => {
                   const study = studyBySlug.get(work.slug);
                   const isOpening = openingSlug === work.slug;
 
                   return (
-                    <div
+                    <AdminProjectCard
                       key={work.slug}
-                      className="flex flex-wrap items-center gap-4 rounded-2xl border border-black/10 bg-white p-4 md:p-5"
-                    >
-                      <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-xl bg-[#ececec]">
-                        <OptimisedPicture
-                          src={work.thumbnail.src}
-                          sources={work.thumbnail.sources}
-                          width={work.thumbnail.width}
-                          height={work.thumbnail.height}
-                          alt=""
-                          loading="lazy"
-                          sizes="7rem"
-                          className="absolute inset-0 h-full w-full object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs uppercase tracking-widest text-gray-400 mb-1">
-                          {work.slug}
-                        </p>
-                        <h3 className="text-lg font-medium">{work.title}</h3>
-                        <p className="text-sm text-gray-500 mt-0.5">
-                          {study ? (
-                            <span className="capitalize">{study.status}</span>
-                          ) : (
-                            'Not started in CMS'
-                          )}
-                        </p>
-                      </div>
-                      <div className="flex gap-2 shrink-0">
-                        {study?.status === 'published' && study.slug ? (
-                          <Link
-                            to={`/works/${study.slug}`}
-                            className="inline-flex items-center gap-2 rounded-full border border-black/10 px-4 py-2 text-sm hover:border-brand-orange hover:text-brand-orange"
-                          >
-                            <ExternalLink size={14} />
-                            View
-                          </Link>
-                        ) : null}
-                        {study ? (
+                      meta={work.slug}
+                      title={work.title}
+                      study={study}
+                      hasStudy={Boolean(study)}
+                      viewHref={
+                        study?.status === 'published' && study.slug
+                          ? `/works/${study.slug}`
+                          : undefined
+                      }
+                      thumbnail={
+                        <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-[#ececec] sm:h-16 sm:w-28">
+                          <OptimisedPicture
+                            src={work.thumbnail.src}
+                            sources={work.thumbnail.sources}
+                            width={work.thumbnail.width}
+                            height={work.thumbnail.height}
+                            alt=""
+                            loading="lazy"
+                            sizes="7rem"
+                            className="absolute inset-0 h-full w-full object-cover"
+                          />
+                        </div>
+                      }
+                      actions={
+                        <>
                           <button
                             type="button"
-                            disabled={deletingId === study.id}
-                            onClick={() => setDeleteTarget(study)}
-                            className="inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-60"
+                            disabled={isOpening}
+                            onClick={() => void openWorkEditor(work.slug)}
+                            className={cn(editBtnClass, 'disabled:opacity-60')}
+                          >
+                            <Pencil size={14} />
+                            {isOpening ? (
+                              '…'
+                            ) : (
+                              <>
+                                <span className="md:hidden">Edit</span>
+                                <span className="hidden md:inline">Edit case study</span>
+                              </>
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={Boolean(study && deletingId === study.id)}
+                            onClick={() => void requestPortfolioDelete(work.slug, study)}
+                            className={deleteBtnClass}
                           >
                             <Trash2 size={14} />
-                            {deletingId === study.id ? 'Deleting…' : 'Delete'}
+                            {study && deletingId === study.id ? '…' : 'Delete'}
                           </button>
-                        ) : null}
-                        <button
-                          type="button"
-                          disabled={isOpening}
-                          onClick={() => void openWorkEditor(work.slug)}
-                          className="inline-flex items-center gap-2 rounded-full bg-brand-black text-white px-4 py-2 text-sm font-medium hover:bg-brand-orange disabled:opacity-60"
-                        >
-                          <Pencil size={14} />
-                          {isOpening ? 'Opening…' : 'Edit case study'}
-                        </button>
-                      </div>
-                    </div>
+                        </>
+                      }
+                    />
                   );
                 })}
               </div>
+              <Pagination
+                offset={portfolioOffset}
+                total={WORKS.length}
+                onChange={setPortfolioOffset}
+              />
             </section>
           </div>
         )}
@@ -232,57 +423,3 @@ export const AdminWorksListPage = () => {
     </div>
   );
 };
-
-const StudyRow = ({
-  title,
-  meta,
-  status,
-  study,
-  onEdit,
-  onDelete,
-  deleting = false
-}: {
-  title: string;
-  meta: string;
-  status: string;
-  study: CaseStudy;
-  onEdit: () => void;
-  onDelete: () => void;
-  deleting?: boolean;
-}) => (
-  <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-black/10 bg-white p-5">
-    <div>
-      <p className="text-xs uppercase tracking-widest text-gray-400 mb-1">{meta}</p>
-      <h2 className="text-xl font-medium">{title}</h2>
-      <p className="text-sm text-gray-500 mt-1 capitalize">{status}</p>
-    </div>
-    <div className="flex gap-2">
-      {study.status === 'published' && study.slug ? (
-        <Link
-          to={`/works/${study.slug}`}
-          className="inline-flex items-center gap-2 rounded-full border border-black/10 px-4 py-2 text-sm hover:border-brand-orange hover:text-brand-orange"
-        >
-          <ExternalLink size={14} />
-          View
-        </Link>
-      ) : null}
-      <button
-        type="button"
-        onClick={onEdit}
-        className="inline-flex items-center gap-2 rounded-full bg-brand-black text-white px-4 py-2 text-sm font-medium hover:bg-brand-orange"
-      >
-        <Pencil size={14} />
-        Edit case study
-      </button>
-      <button
-        type="button"
-        disabled={deleting}
-        onClick={onDelete}
-        className="inline-flex items-center gap-2 rounded-full border border-red-200 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-60"
-      >
-        <Trash2 size={14} />
-        {deleting ? 'Deleting…' : 'Delete'}
-      </button>
-    </div>
-  </div>
-);

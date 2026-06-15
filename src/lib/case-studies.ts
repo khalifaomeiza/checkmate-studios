@@ -162,27 +162,33 @@ export const fetchCaseStudyForEditor = async (slug: string): Promise<CaseStudy |
   }
 };
 
-export const fetchAllCaseStudiesAdmin = async (): Promise<CaseStudy[]> => {
-  if (!supabase) return [];
+export const fetchAllCaseStudiesAdmin = async (
+  opts: { limit?: number; offset?: number } = {}
+): Promise<{ rows: CaseStudy[]; total: number }> => {
+  if (!supabase) return { rows: [], total: 0 };
+
+  const limit = opts.limit ?? 100;
+  const offset = opts.offset ?? 0;
 
   try {
-    const { data, error } = await withTimeout(
+    const { data, error, count } = await withTimeout(
       supabase
         .from('case_studies')
-        .select(studySelect)
+        .select(studySelect, { count: 'exact' })
         .order('sort_order', { ascending: true })
-        .order('updated_at', { ascending: false }),
+        .order('updated_at', { ascending: false })
+        .range(offset, offset + limit - 1),
       'Case studies list'
     );
 
     if (error) {
       console.error('[case-studies] list fetch', error.message);
-      return [];
+      return { rows: [], total: 0 };
     }
-    return (data ?? []) as CaseStudy[];
+    return { rows: (data ?? []) as CaseStudy[], total: count ?? 0 };
   } catch (e) {
     console.error('[case-studies] list failed', e);
-    return [];
+    return { rows: [], total: 0 };
   }
 };
 
