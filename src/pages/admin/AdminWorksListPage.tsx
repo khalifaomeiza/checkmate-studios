@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { AdminLayout, adminPrimaryBtn } from '../../components/admin/AdminLayout';
 import { Plus, Pencil, ExternalLink, Trash2 } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
 import { fetchAllCaseStudiesAdmin, fetchCaseStudyForEditor } from '../../lib/case-studies';
 import { deleteCaseStudy, openOrCreateCaseStudyForWork } from '../../lib/case-study-admin';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
@@ -132,7 +132,6 @@ const AdminProjectCard = ({
 );
 
 export const AdminWorksListPage = () => {
-  const { signOut, profile } = useAuth();
   const navigate = useNavigate();
   const [studies, setStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
@@ -241,7 +240,16 @@ export const AdminWorksListPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#fafafa] pt-24 pb-24 px-4 sm:px-6 md:px-10">
+    <AdminLayout
+      title="Case studies"
+      description="Build Behance-style project pages for the portfolio."
+      actions={
+        <button type="button" className={adminPrimaryBtn} onClick={() => navigate('/admin/works/new')}>
+          <Plus size={16} />
+          New case study
+        </button>
+      }
+    >
       <ConfirmModal
         open={Boolean(deleteTarget)}
         title={`Delete “${deleteTarget?.slug ?? deleteTarget?.title ?? 'project'}”?`}
@@ -254,38 +262,7 @@ export const AdminWorksListPage = () => {
         }}
         onConfirm={() => void removeStudy()}
       />
-      <div className="max-w-5xl mx-auto">
-        <div className="flex flex-col gap-6 mb-12 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <Link to="/" className="text-xl font-medium tracking-tighter block mb-4">
-              checkmate
-            </Link>
-            <h1 className="text-3xl font-normal tracking-tight sm:text-4xl">Case studies</h1>
-            <p className="text-gray-500 mt-2 text-sm sm:text-base">
-              Signed in as {profile?.email ?? 'editor'} — build Behance-style project pages.
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/admin/works/new')}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-black text-white px-5 py-3 text-sm font-medium hover:bg-brand-orange transition-colors"
-            >
-              <Plus size={16} />
-              New case study
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                void signOut().then(() => navigate('/admin/login', { replace: true }));
-              }}
-              className="rounded-full border border-black/15 px-5 py-3 text-sm font-medium hover:border-brand-orange hover:text-brand-orange transition-colors"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-
+      <div>
         {openError ? (
           <p className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{openError}</p>
         ) : null}
@@ -420,6 +397,6 @@ export const AdminWorksListPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 };

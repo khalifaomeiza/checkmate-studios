@@ -21,7 +21,10 @@ export const AdminLoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6 py-24">
+    <div
+      className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6 py-24"
+      data-testid="admin-login-page"
+    >
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -31,7 +34,7 @@ export const AdminLoginPage = () => {
           checkmate
         </Link>
         <h1 className="text-3xl font-normal tracking-tight mb-2">Studio sign in</h1>
-        <p className="text-gray-500 mb-8">Manage case studies and upload new work.</p>
+        <p className="text-gray-500 mb-8">Manage case studies, Playground, Careers, and applications.</p>
         {signupMessage ? (
           <p className="mb-6 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {signupMessage}
@@ -93,6 +96,7 @@ export const AdminLoginPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
+                data-testid="admin-login-submit"
                 className="w-full rounded-full bg-brand-black text-white py-4 font-medium hover:bg-brand-orange transition-colors disabled:opacity-60"
               >
                 {isSubmitting ? 'Signing in…' : 'Sign in'}

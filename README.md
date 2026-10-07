@@ -55,6 +55,17 @@ Public case studies live at `/works/:slug` (replacing Behance links). Studio edi
 | `/admin/works` | List + create case studies |
 | `/admin/works/new` | New project editor |
 | `/admin/works/edit/:id` | Behance-style section builder (id-based) |
+| `/admin/playground` | Playground hero + post list |
+| `/admin/playground/new` · `/admin/playground/edit/:id` | Create / edit Playground posts |
+| `/admin/careers` | Careers hero, benefits + job listings |
+| `/admin/careers/new` · `/admin/careers/edit/:id` | Create / edit open roles |
+| `/admin/applications` | Career applications table (from website forms) |
+
+Run end-to-end tests (builds preview server automatically):
+
+```bash
+npm run test:e2e
+```
 
 Media uploads go through the `case-study-media-upload` Edge Function. **Cloudflare R2** is used when `R2_*` secrets are set (`npm run fn:secrets`); otherwise files land in the public Supabase Storage bucket `case-study-media`. Deleting a case study (`case-study-delete`) removes the database row and all media under `case-studies/{id}/` on R2 plus the `{id}/` folder in Supabase Storage.
 

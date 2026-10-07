@@ -18,6 +18,11 @@ import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminSignupPage } from './pages/admin/AdminSignupPage';
 import { AdminWorksListPage } from './pages/admin/AdminWorksListPage';
 import { CaseStudyEditorPage } from './pages/admin/CaseStudyEditorPage';
+import { AdminPlaygroundPage } from './pages/admin/AdminPlaygroundPage';
+import { AdminPlaygroundEditorPage } from './pages/admin/AdminPlaygroundEditorPage';
+import { AdminCareersListPage } from './pages/admin/AdminCareersListPage';
+import { AdminCareerJobEditorPage } from './pages/admin/AdminCareerJobEditorPage';
+import { AdminApplicationsPage } from './pages/admin/AdminApplicationsPage';
 
 export default function App() {
   const location = useLocation();
@@ -89,6 +94,62 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <CaseStudyEditorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/playground"
+              element={
+                <ProtectedRoute>
+                  <AdminPlaygroundPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/playground/new"
+              element={
+                <ProtectedRoute>
+                  <AdminPlaygroundEditorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/playground/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <AdminPlaygroundEditorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/careers"
+              element={
+                <ProtectedRoute>
+                  <AdminCareersListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/careers/new"
+              element={
+                <ProtectedRoute>
+                  <AdminCareerJobEditorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/careers/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <AdminCareerJobEditorPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/applications"
+              element={
+                <ProtectedRoute>
+                  <AdminApplicationsPage />
                 </ProtectedRoute>
               }
             />
